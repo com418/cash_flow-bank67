@@ -1,395 +1,3954 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cashflowbank - Admin & Client Portal</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            900: '#312e81',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#063d29">
+<meta name="description" content="Cash Flow Bank">
+<title>Cash Flow Bank</title>
+
+<style>
+:root{
+  --g950:#03291c;
+  --g900:#043522;
+  --g850:#06432b;
+  --g800:#075436;
+  --g700:#087044;
+  --g600:#098451;
+  --g500:#0b9a5e;
+  --g400:#27b978;
+  --g100:#dff7eb;
+  --g50:#f1fbf6;
+  --white:#fff;
+  --ink:#10241c;
+  --muted:#718079;
+  --line:#e2ebe6;
+  --bg:#f5faf7;
+  --danger:#c53e4d;
+  --warning:#bd7b16;
+  --shadow:0 18px 55px rgba(4,53,34,.09);
+  --shadow2:0 30px 80px rgba(2,41,28,.15);
+  --side:270px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+a{text-decoration:none;color:inherit}
+
+svg{display:block}
+
+#loader{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:linear-gradient(145deg,#03291c,#075436);
+  display:grid;
+  place-items:center;
+  transition:.4s;
+}
+.loader-box{text-align:center;color:#fff}
+.loader-icon{
+  width:82px;
+  height:82px;
+  border-radius:25px;
+  display:grid;
+  place-items:center;
+  margin:auto;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:0 25px 70px rgba(0,0,0,.2);
+}
+.loader-icon svg{width:44px;height:44px}
+.loader-name{font-size:22px;font-weight:850;margin-top:16px}
+.loader-bar{
+  width:150px;height:3px;
+  border-radius:20px;
+  background:rgba(255,255,255,.15);
+  overflow:hidden;
+  margin:17px auto;
+}
+.loader-bar span{
+  display:block;width:40%;height:100%;
+  background:#fff;
+  animation:loader 1.1s infinite;
+}
+@keyframes loader{
+  from{transform:translateX(-130%)}
+  to{transform:translateX(380%)}
+}
+
+/* LANDING */
+
+#landing{display:none}
+
+.landing{
+  min-height:100vh;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 80% 10%,rgba(11,154,94,.14),transparent 28%),
+    linear-gradient(145deg,#fbfefd,#edf8f3);
+}
+
+.nav{
+  position:absolute;
+  top:0;left:0;right:0;
+  z-index:20;
+  height:76px;
+  padding:0 6%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:850;
+}
+.logo{
+  width:40px;height:40px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:var(--g800);
+  border-radius:13px;
+  box-shadow:0 12px 28px rgba(7,84,54,.2);
+}
+.logo svg{width:23px;height:23px}
+.brand-name{font-size:18px}
+.nav-links{
+  display:flex;
+  gap:29px;
+  color:#53635c;
+  font-size:13px;
+  font-weight:700;
+}
+.nav-links a:hover{color:var(--g700)}
+.nav-buttons{display:flex;gap:9px}
+
+.btn{
+  min-height:44px;
+  border:0;
+  padding:0 18px;
+  border-radius:13px;
+  font-weight:800;
+  transition:.2s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{
+  color:#fff;
+  background:var(--g800);
+  box-shadow:0 12px 28px rgba(7,84,54,.17);
+}
+.btn-primary:hover{background:var(--g700)}
+.btn-light{
+  color:var(--g800);
+  background:#fff;
+  border:1px solid var(--line);
+}
+.btn-danger{background:#fff1f3;color:#a43c4a}
+.btn-wide{width:100%}
+
+.hero{
+  min-height:880px;
+  padding:145px 6% 90px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:55px;
+  align-items:center;
+  position:relative;
+}
+.hero-copy{position:relative;z-index:5;max-width:700px}
+.kicker{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  background:#fff;
+  border:1px solid #dceae3;
+  border-radius:999px;
+  padding:8px 13px;
+  color:var(--g800);
+  font-size:11px;
+  font-weight:850;
+  box-shadow:0 8px 25px rgba(4,53,34,.05);
+}
+.dot{
+  width:7px;height:7px;
+  background:var(--g500);
+  border-radius:50%;
+  box-shadow:0 0 0 5px rgba(11,154,94,.1);
+}
+.hero h1{
+  color:var(--g950);
+  font-size:clamp(48px,6.2vw,84px);
+  line-height:.96;
+  letter-spacing:-4px;
+  margin:23px 0;
+}
+.hero h1 span{color:var(--g700)}
+.hero p{
+  max-width:610px;
+  color:#63736c;
+  font-size:17px;
+  line-height:1.75;
+}
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:11px;
+  margin-top:30px;
+}
+.trust{
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  margin-top:32px;
+}
+.trust-item{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#596961;
+  font-size:11px;
+  font-weight:750;
+}
+.trust-item svg{width:18px;color:var(--g700)}
+
+.hero-art{
+  min-height:590px;
+  position:relative;
+  display:grid;
+  place-items:center;
+}
+.glow{
+  position:absolute;
+  width:500px;height:500px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(11,154,94,.23),transparent 70%);
+}
+.building{
+  width:300px;height:490px;
+  position:absolute;
+  right:17%;
+  bottom:30px;
+  border-radius:150px 150px 22px 22px;
+  border:1px solid rgba(7,84,54,.14);
+  background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(223,247,235,.42));
+  transform:perspective(900px) rotateY(-12deg);
+  box-shadow:0 35px 80px rgba(4,53,34,.13);
+  overflow:hidden;
+}
+.building:before{
+  content:"";
+  position:absolute;
+  inset:32px;
+  opacity:.4;
+  background:
+    repeating-linear-gradient(90deg,rgba(7,84,54,.12) 0 2px,transparent 2px 37px),
+    repeating-linear-gradient(0deg,rgba(7,84,54,.1) 0 2px,transparent 2px 34px);
+}
+.building-top{
+  position:absolute;
+  top:-55px;
+  left:50%;
+  transform:translateX(-50%);
+  width:82px;height:100px;
+  border-radius:50% 50% 0 0;
+  border:1px solid rgba(7,84,54,.1);
+  background:rgba(255,255,255,.5);
+}
+
+.float-card{
+  position:absolute;
+  z-index:5;
+  background:rgba(255,255,255,.95);
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:21px;
+  box-shadow:var(--shadow2);
+  backdrop-filter:blur(18px);
+  animation:float 5s ease-in-out infinite;
+}
+.balance-float{
+  left:2%;
+  top:75px;
+  width:310px;
+  padding:20px;
+}
+.activity-float{
+  right:1%;
+  bottom:75px;
+  width:230px;
+  padding:16px;
+  animation-delay:1.3s;
+}
+.security-float{
+  right:2%;
+  top:50px;
+  padding:12px 15px;
+  display:flex;
+  gap:9px;
+  align-items:center;
+  font-size:10px;
+  font-weight:850;
+  color:var(--g800);
+  animation-duration:6.5s;
+}
+.security-float svg{width:19px}
+.small-label{
+  color:#7b8983;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+}
+.money{
+  color:var(--g950);
+  font-size:30px;
+  font-weight:900;
+  letter-spacing:-1.4px;
+  margin:6px 0;
+}
+.positive{color:var(--g700);font-weight:850}
+.mini-chart{height:70px;margin-top:12px}
+.mini-chart svg{width:100%;height:100%}
+
+.orb{
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(7,84,54,.13);
+  background:rgba(255,255,255,.45);
+  animation:float 7s ease-in-out infinite;
+}
+.orb1{width:72px;height:72px;left:8%;top:25px}
+.orb2{width:30px;height:30px;right:5%;bottom:30px;animation-delay:1s}
+.orb3{width:17px;height:17px;left:4%;top:45%;background:var(--g400);opacity:.45;animation-duration:4.5s}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
+}
+
+/* SECTION */
+
+.section{
+  padding:95px 6%;
+  background:#fff;
+}
+.section.alt{background:#f5faf7}
+.section-head{
+  max-width:700px;
+  margin:0 auto 45px;
+  text-align:center;
+}
+.section-head span{
+  color:var(--g700);
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1.4px;
+}
+.section-head h2{
+  color:var(--g950);
+  font-size:clamp(30px,4vw,48px);
+  letter-spacing:-2px;
+  margin:10px 0;
+}
+.section-head p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.8;
+}
+.service-grid{
+  max-width:1200px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+.service{
+  padding:25px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 8px 30px rgba(4,53,34,.035);
+}
+.service-icon{
+  width:45px;height:45px;
+  display:grid;
+  place-items:center;
+  background:var(--g50);
+  color:var(--g700);
+  border-radius:14px;
+}
+.service-icon svg{width:22px}
+.service h3{font-size:15px;margin-top:17px}
+.service p{
+  color:#78867f;
+  font-size:11px;
+  line-height:1.75;
+  margin-top:6px;
+}
+
+.security-section{
+  max-width:1200px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:50px;
+  align-items:center;
+}
+.security-visual{
+  min-height:400px;
+  border-radius:30px;
+  background:linear-gradient(145deg,#03291c,#087044);
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+}
+.security-ring{
+  width:250px;height:250px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  animation:spin 18s linear infinite;
+}
+.security-ring:before{
+  content:"";
+  width:175px;height:175px;
+  border:1px dashed rgba(255,255,255,.18);
+  border-radius:50%;
+}
+.security-lock{
+  position:absolute;
+  color:#fff;
+}
+.security-lock svg{width:70px;height:70px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.security-copy h2{
+  color:var(--g950);
+  font-size:42px;
+  letter-spacing:-2px;
+}
+.security-copy p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.8;
+  margin:13px 0 23px;
+}
+.security-list{
+  display:grid;
+  gap:12px;
+}
+.security-list div{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  font-size:11px;
+  font-weight:750;
+}
+.security-list svg{width:18px;color:var(--g700)}
+
+.footer{
+  padding:35px 6%;
+  background:var(--g950);
+  color:#fff;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.footer small{color:rgba(255,255,255,.5);font-size:10px}
+
+/* AUTH */
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  display:none;
+  place-items:center;
+  padding:18px;
+  background:rgba(2,41,28,.5);
+  backdrop-filter:blur(12px);
+}
+.modal.show{display:grid}
+.modal-box{
+  width:min(530px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:27px;
+  padding:28px;
+  box-shadow:0 35px 100px rgba(0,0,0,.25);
+  position:relative;
+}
+.close{
+  position:absolute;
+  right:17px;top:17px;
+  width:38px;height:38px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:11px;
+  display:grid;
+  place-items:center;
+}
+.close svg{width:17px}
+.modal-title{
+  font-size:27px;
+  font-weight:900;
+  color:var(--g950);
+}
+.modal-sub{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.65;
+  margin:7px 0 20px;
+}
+.tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  padding:5px;
+  gap:5px;
+  background:#edf5f1;
+  border-radius:13px;
+  margin-bottom:21px;
+}
+.tab{
+  border:0;
+  background:transparent;
+  padding:11px;
+  border-radius:10px;
+  font-weight:850;
+  color:#64736c;
+}
+.tab.active{
+  background:#fff;
+  color:var(--g800);
+  box-shadow:0 5px 15px rgba(4,53,34,.07);
+}
+.auth-form{display:none}
+.auth-form.active{display:block}
+.field{margin-bottom:13px}
+.field label{
+  display:block;
+  color:#5c6b64;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.8px;
+  margin-bottom:6px;
+}
+.field input,.field select,.field textarea{
+  width:100%;
+  min-height:47px;
+  border:1px solid #dce6e1;
+  background:#fbfdfc;
+  border-radius:12px;
+  padding:0 13px;
+  outline:none;
+  color:var(--ink);
+}
+.field textarea{padding:12px;min-height:90px}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--g500);
+  box-shadow:0 0 0 4px rgba(11,154,94,.08);
+}
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0 12px;
+}
+.full{grid-column:1/-1}
+.password{position:relative}
+.password input{padding-right:48px}
+.eye{
+  position:absolute;
+  right:7px;
+  top:6px;
+  width:35px;height:35px;
+  border:0;
+  background:transparent;
+  color:#718079;
+}
+.form-note{
+  background:var(--g50);
+  border:1px solid #d7eee1;
+  padding:11px 12px;
+  border-radius:12px;
+  color:#61736a;
+  font-size:9px;
+  line-height:1.6;
+  margin-bottom:13px;
+}
+
+/* APP */
+
+#app{display:none}
+.app{
+  min-height:100vh;
+  display:flex;
+}
+.sidebar{
+  width:var(--side);
+  position:fixed;
+  inset:0 auto 0 0;
+  background:linear-gradient(180deg,#03291c,#06432b);
+  color:#fff;
+  z-index:1000;
+  padding:19px 14px;
+  display:flex;
+  flex-direction:column;
+  transition:.3s;
+}
+.side-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:4px 8px 22px;
+}
+.side-brand .logo{
+  background:rgba(255,255,255,.1);
+  box-shadow:none;
+}
+.side-brand strong{display:block;font-size:14px}
+.side-brand small{display:block;color:rgba(255,255,255,.45);font-size:9px;margin-top:2px}
+.side-scroll{overflow:auto}
+.side-label{
+  color:rgba(255,255,255,.36);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:1.5px;
+  margin:17px 10px 7px;
+}
+.side-link{
+  width:100%;
+  min-height:44px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:rgba(255,255,255,.67);
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:0 11px;
+  margin-bottom:3px;
+  font-size:11px;
+  font-weight:750;
+  text-align:left;
+}
+.side-link svg{width:18px;height:18px;flex:0 0 18px}
+.side-link:hover{background:rgba(255,255,255,.07);color:#fff}
+.side-link.active{
+  color:#fff;
+  background:rgba(255,255,255,.13);
+  box-shadow:inset 3px 0 0 #5ce09e;
+}
+.side-bottom{
+  margin-top:auto;
+  border-top:1px solid rgba(255,255,255,.08);
+  padding-top:12px;
+}
+.user-mini{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px;
+}
+.avatar{
+  width:38px;height:38px;
+  border-radius:12px;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  background:#bcebd4;
+  color:var(--g900);
+  font-size:12px;
+  font-weight:900;
+}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.user-mini strong{display:block;font-size:10px}
+.user-mini small{display:block;color:rgba(255,255,255,.43);font-size:8px;margin-top:2px}
+
+.main{
+  flex:1;
+  min-width:0;
+  margin-left:var(--side);
+}
+.topbar{
+  height:70px;
+  position:sticky;
+  top:0;
+  z-index:500;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  background:rgba(255,255,255,.93);
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid var(--line);
+}
+.top-left{display:flex;align-items:center;gap:12px}
+.mobile-menu{
+  display:none;
+  width:40px;height:40px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:12px;
+}
+.top-title strong{display:block;font-size:14px}
+.top-title small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+.top-actions{display:flex;gap:8px}
+.icon-btn{
+  width:39px;height:39px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  color:#596961;
+}
+.icon-btn svg{width:18px}
+.page{
+  display:none;
+  padding:27px 29px 60px;
+  max-width:1540px;
+  margin:auto;
+}
+.page.active{display:block}
+.page-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:23px;
+}
+.page-head h1{
+  font-size:27px;
+  color:var(--g950);
+  letter-spacing:-1px;
+}
+.page-head p{color:var(--muted);font-size:10px;margin-top:5px}
+.page-date{font-size:10px;color:#7b8983;font-weight:750}
+
+/* DASHBOARD */
+
+.dash-hero{
+  min-height:305px;
+  border-radius:29px;
+  background:
+    radial-gradient(circle at 84% 15%,rgba(88,224,158,.18),transparent 27%),
+    linear-gradient(125deg,#03291c,#075436 72%,#087044);
+  color:#fff;
+  padding:34px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 25px 65px rgba(4,53,34,.18);
+}
+.dash-hero:before,.dash-hero:after{
+  content:"";
+  position:absolute;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:50%;
+}
+.dash-hero:before{
+  width:430px;height:430px;
+  right:-110px;top:-190px;
+}
+.dash-hero:after{
+  width:300px;height:300px;
+  right:100px;bottom:-240px;
+}
+.dash-content{position:relative;z-index:3}
+.dash-kicker{
+  display:flex;align-items:center;gap:7px;
+  color:#baf2d4;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:900;
+}
+.dash-kicker svg{width:16px}
+.dash-hero h2{
+  font-size:clamp(30px,4vw,47px);
+  letter-spacing:-2px;
+  line-height:1.02;
+  margin:12px 0 8px;
+}
+.dash-hero p{
+  max-width:550px;
+  color:rgba(255,255,255,.62);
+  font-size:11px;
+  line-height:1.7;
+}
+.hero-balance{
+  margin-top:25px;
+}
+.hero-balance small{
+  color:rgba(255,255,255,.5);
+  font-size:9px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.balance-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-top:4px;
+}
+.balance-row strong{
+  font-size:39px;
+  letter-spacing:-2px;
+}
+.balance-eye{
+  width:34px;height:34px;
+  border:0;
+  background:rgba(255,255,255,.1);
+  color:#fff;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+}
+.balance-eye svg{width:17px}
+.account-no{
+  color:rgba(255,255,255,.47);
+  font-size:9px;
+  margin-top:7px;
+}
+.dash-float{
+  position:absolute;
+  z-index:4;
+  padding:13px;
+  min-width:175px;
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.09);
+  backdrop-filter:blur(15px);
+  border-radius:17px;
+  animation:float 5.5s ease-in-out infinite;
+}
+.dash-float.one{right:35px;top:38px}
+.dash-float.two{right:120px;bottom:30px;animation-delay:1.3s}
+.float-title{
+  color:rgba(255,255,255,.5);
+  font-size:8px;
+  text-transform:uppercase;
+  font-weight:850;
+}
+.float-value{font-size:19px;font-weight:900;margin-top:5px}
+.float-meta{color:#82eab3;font-size:9px;font-weight:800;margin-top:3px}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:13px;
+  margin-top:15px;
+}
+.stat{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:19px;
+  padding:18px;
+  box-shadow:0 8px 30px rgba(4,53,34,.035);
+}
+.stat-top{display:flex;justify-content:space-between}
+.stat-icon{
+  width:35px;height:35px;
+  border-radius:11px;
+  background:var(--g50);
+  color:var(--g700);
+  display:grid;
+  place-items:center;
+}
+.stat-icon svg{width:17px}
+.stat-label{color:#7a8882;font-size:9px;font-weight:800}
+.stat-value{
+  color:var(--g950);
+  font-size:21px;
+  font-weight:900;
+  margin-top:14px;
+  letter-spacing:-.8px;
+}
+.stat-meta{color:#7c8983;font-size:8px;margin-top:4px}
+.stat-meta.green{color:var(--g700)}
+
+.content{
+  display:grid;
+  grid-template-columns:minmax(0,1.4fr) minmax(290px,.75fr);
+  gap:15px;
+  margin-top:15px;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:21px;
+  padding:20px;
+  box-shadow:0 8px 30px rgba(4,53,34,.035);
+}
+.card-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  margin-bottom:17px;
+}
+.card-title{font-size:13px;font-weight:900;color:var(--g950)}
+.card-sub{font-size:9px;color:#7d8a84;margin-top:3px}
+.text-btn{
+  border:0;
+  background:transparent;
+  color:var(--g700);
+  font-size:9px;
+  font-weight:900;
+}
+.chart{height:225px}
+.chart svg{width:100%;height:100%}
+.chart-label{fill:#89958f;font-size:9px}
+.quick{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+.quick-btn{
+  min-height:95px;
+  border:1px solid var(--line);
+  background:#fbfdfc;
+  border-radius:15px;
+  padding:13px;
+  text-align:left;
+  transition:.2s;
+}
+.quick-btn:hover{
+  background:var(--g50);
+  border-color:#afd8c2;
+  transform:translateY(-2px);
+}
+.quick-icon{
+  width:33px;height:33px;
+  border-radius:10px;
+  background:var(--g100);
+  color:var(--g800);
+  display:grid;
+  place-items:center;
+}
+.quick-icon svg{width:16px}
+.quick-btn strong{display:block;font-size:10px;margin-top:10px}
+.quick-btn span{display:block;color:#85918c;font-size:8px;margin-top:3px}
+
+.transactions{display:flex;flex-direction:column}
+.tx{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px 0;
+  border-bottom:1px solid #edf2ef;
+}
+.tx:last-child{border-bottom:0}
+.tx-icon{
+  width:37px;height:37px;
+  border-radius:11px;
+  background:#f0f8f4;
+  color:var(--g700);
+  display:grid;
+  place-items:center;
+  flex:0 0 37px;
+}
+.tx-icon.out{background:#fff2f3;color:#a14b55}
+.tx-icon svg{width:17px}
+.tx-main{flex:1;min-width:0}
+.tx-main strong{
+  display:block;
+  font-size:10px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.tx-main span{display:block;color:#88948e;font-size:8px;margin-top:3px}
+.tx-amount{text-align:right}
+.tx-amount strong{display:block;font-size:10px}
+.tx-amount small{font-size:7px;color:var(--g700);font-weight:850}
+
+.status-list{display:flex;flex-direction:column;gap:11px}
+.status-row{display:flex;align-items:center;gap:10px}
+.status-check{
+  width:32px;height:32px;
+  background:var(--g50);
+  color:var(--g700);
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+}
+.status-check svg{width:15px}
+.status-row strong{display:block;font-size:9px}
+.status-row span{display:block;color:#89948f;font-size:8px;margin-top:2px}
+.pill{
+  margin-left:auto;
+  border-radius:999px;
+  padding:5px 8px;
+  background:#e7f8ef;
+  color:var(--g700);
+  font-size:7px;
+  font-weight:900;
+}
+
+/* FORMS/PAGES */
+
+.transfer-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 350px;
+  gap:15px;
+}
+.transfer-card,.side-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:22px;
+}
+.transfer-tabs{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:7px;
+  margin-bottom:20px;
+}
+.transfer-tab{
+  min-height:49px;
+  border:1px solid var(--line);
+  background:#fbfdfc;
+  border-radius:12px;
+  font-size:10px;
+  font-weight:850;
+  color:#68776f;
+}
+.transfer-tab.active{
+  color:#fff;
+  background:var(--g800);
+  border-color:var(--g800);
+}
+.security-note{
+  display:flex;
+  gap:11px;
+  align-items:center;
+  padding:14px;
+  border:1px solid #d5eee1;
+  background:var(--g50);
+  border-radius:14px;
+  margin-bottom:18px;
+}
+.security-note svg{width:21px;color:var(--g700)}
+.security-note strong{display:block;font-size:9px}
+.security-note span{display:block;color:#74827c;font-size:8px;margin-top:3px}
+
+.summary{
+  display:grid;
+  gap:0;
+}
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  padding:11px 0;
+  border-bottom:1px solid #edf2ef;
+  font-size:9px;
+}
+.summary-row span{color:#78857f}
+.summary-row strong{color:var(--g950)}
+
+.limit{
+  margin-top:17px;
+}
+.limit-head{
+  display:flex;
+  justify-content:space-between;
+  font-size:9px;
+  font-weight:800;
+}
+.limit-head span{color:#78857f}
+.limit-bar{
+  height:7px;
+  background:#e7efeb;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:8px;
+}
+.limit-bar span{
+  display:block;
+  height:100%;
+  width:0;
+  background:var(--g600);
+  border-radius:20px;
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.info-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:20px;
+}
+.info-icon{
+  width:42px;height:42px;
+  border-radius:13px;
+  background:var(--g50);
+  color:var(--g700);
+  display:grid;
+  place-items:center;
+}
+.info-icon svg{width:20px}
+.info-card h3{font-size:13px;margin-top:14px}
+.info-card p{font-size:9px;color:#7b8882;line-height:1.7;margin-top:5px}
+
+.profile-layout{
+  display:grid;
+  grid-template-columns:290px minmax(0,1fr);
+  gap:15px;
+}
+.profile-card,.profile-fields{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:21px;
+  padding:22px;
+}
+.profile-card{text-align:center}
+.profile-avatar{
+  width:95px;height:95px;
+  margin:0 auto 14px;
+  border-radius:28px;
+  background:var(--g100);
+  color:var(--g800);
+  display:grid;
+  place-items:center;
+  font-size:25px;
+  font-weight:900;
+  overflow:hidden;
+}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-card h2{font-size:17px}
+.profile-card p{font-size:9px;color:#7c8883;margin-top:4px}
+.detail{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  padding:13px 0;
+  border-bottom:1px solid #edf2ef;
+  font-size:9px;
+}
+.detail:last-child{border-bottom:0}
+.detail span{color:#7b8983}
+.detail strong{color:var(--g950);text-align:right}
+
+.settings{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:21px;
+  padding:22px;
+}
+.setting{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:center;
+  padding:16px 0;
+  border-bottom:1px solid #edf2ef;
+}
+.setting:last-child{border-bottom:0}
+.setting strong{display:block;font-size:10px}
+.setting p{color:#7e8a84;font-size:8px;margin-top:3px}
+.switch{
+  width:44px;height:24px;
+  border:0;
+  background:#dce6e1;
+  border-radius:30px;
+  position:relative;
+}
+.switch:after{
+  content:"";
+  position:absolute;
+  width:18px;height:18px;
+  left:3px;top:3px;
+  background:#fff;
+  border-radius:50%;
+  transition:.2s;
+  box-shadow:0 2px 5px rgba(0,0,0,.12);
+}
+.switch.on{background:var(--g600)}
+.switch.on:after{left:23px}
+
+/* HISTORY */
+
+.history-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.history-table th{
+  text-align:left;
+  padding:12px 10px;
+  color:#7c8983;
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  border-bottom:1px solid var(--line);
+}
+.history-table td{
+  padding:14px 10px;
+  border-bottom:1px solid #edf2ef;
+  font-size:9px;
+}
+.amount-in{color:var(--g700);font-weight:850}
+.amount-out{color:#a34a54;font-weight:850}
+.status{
+  display:inline-flex;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:7px;
+  font-weight:900;
+}
+.status.completed{background:#e7f8ef;color:var(--g700)}
+.status.pending{background:#fff5df;color:#9b6811}
+.status.declined{background:#fff0f2;color:#a13e4b}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  z-index:99999;
+  right:18px;
+  bottom:18px;
+  min-width:270px;
+  max-width:390px;
+  background:#062f20;
+  color:#fff;
+  border-radius:15px;
+  padding:14px 16px;
+  box-shadow:0 20px 50px rgba(0,0,0,.22);
+  transform:translateY(130px);
+  opacity:0;
+  transition:.3s;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast strong{display:block;font-size:10px}
+.toast span{display:block;color:rgba(255,255,255,.62);font-size:8px;margin-top:3px}
+
+/* OVERLAY */
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:900;
+  background:rgba(2,41,28,.42);
+}
+.overlay.show{display:block}
+
+/* RESPONSIVE */
+
+@media(max-width:1150px){
+  .hero{grid-template-columns:1fr;padding-top:125px}
+  .hero-art{min-height:520px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .content,.transfer-layout{grid-template-columns:1fr}
+  .service-grid{grid-template-columns:1fr 1fr}
+  .security-section{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .mobile-menu{display:grid}
+  .nav-links{display:none}
+  .nav{padding:0 20px}
+  .hero{padding-left:20px;padding-right:20px}
+  .profile-layout{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+  .nav-buttons .btn-light{display:none}
+  .brand-name{font-size:16px}
+  .hero{
+    min-height:auto;
+    padding-top:115px;
+    padding-bottom:65px;
+  }
+  .hero h1{font-size:48px;letter-spacing:-2.5px}
+  .hero p{font-size:14px}
+  .hero-art{min-height:440px}
+  .building{width:225px;height:375px;right:13%}
+  .balance-float{width:220px;left:0;top:65px}
+  .activity-float{width:175px;right:0;bottom:55px}
+  .security-float{right:0;top:20px}
+  .section{padding:70px 20px}
+  .service-grid{grid-template-columns:1fr}
+  .security-copy h2{font-size:34px}
+  .topbar{padding:0 14px}
+  .top-title small{display:none}
+  .page{padding:20px 14px 45px}
+  .page-head{align-items:flex-start;flex-direction:column}
+  .dash-hero{padding:25px 21px;min-height:350px}
+  .dash-hero h2{font-size:30px}
+  .balance-row strong{font-size:31px}
+  .dash-float.one{right:14px;bottom:20px;top:auto}
+  .dash-float.two{display:none}
+  .stats{grid-template-columns:1fr 1fr;gap:9px}
+  .stat{padding:14px}
+  .stat-value{font-size:17px}
+  .card{padding:16px}
+  .info-grid{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .transfer-tabs{grid-template-columns:1fr}
+  .history-table{min-width:620px}
+  .history-wrap{overflow:auto}
+}
+@media(max-width:420px){
+  .stats{grid-template-columns:1fr}
+  .hero h1{font-size:43px}
+}
+</style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
 
-    <!-- App Container -->
-    <div id="app" class="flex-1 flex flex-col">
+<body>
 
-        <!-- Navigation Bar -->
-        <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-brand-600 text-white p-2 rounded-lg shadow-md">
-                        <i class="fa-solid fa-vault text-xl"></i>
-                    </div>
-                    <span class="text-xl font-bold tracking-tight text-white">Cashflow<span class="text-brand-500">bank</span></span>
-                </div>
-                <div id="nav-auth-section" class="flex items-center space-x-4">
-                    <!-- Dynamic Auth / User Info -->
-                    <span id="user-display" class="text-sm text-slate-300 hidden"></span>
-                    <button id="auth-btn" onclick="openAuthModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow">
-                        Sign In / Register
-                    </button>
-                </div>
-            </div>
-        </header>
+<!-- SVG DEFINITIONS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+  <linearGradient id="bankGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#0b9a5e"/>
+    <stop offset="1" stop-color="#06432b"/>
+  </linearGradient>
+</defs>
+</svg>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-box">
+    <div class="loader-icon">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M7 19 24 8l17 11" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M11 20v16M19 20v16M29 20v16M37 20v16" stroke="currentColor" stroke-width="3"/>
+        <path d="M6 38h36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="loader-name">Cash Flow Bank</div>
+    <div class="loader-bar"><span></span></div>
+  </div>
+</div>
 
-            <!-- Landing / Unauthenticated State -->
-            <div id="landing-view" class="py-12 text-center">
-                <div class="max-w-3xl mx-auto space-y-6">
-                    <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-                        Next-Generation Financial <span class="text-brand-500">Management & Portal</span>
-                    </h1>
-                    <p class="text-lg text-slate-400">
-                        Secure client accounts, real-time transaction tracking, administrative management tools, and seamless Firebase-powered infrastructure.
-                    </p>
-                    <div class="pt-4 flex justify-center gap-4">
-                        <button onclick="openAuthModal('signin')" class="bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3 rounded-xl shadow-lg transition">
-                            Access Portal
-                        </button>
-                        <button onclick="openAuthModal('signup')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-6 py-3 rounded-xl border border-slate-700 transition">
-                            Create Account
-                        </button>
-                    </div>
-                </div>
-            </div>
+<!-- LANDING -->
+<div id="landing" class="landing">
 
-            <!-- Client Portal Dashboard -->
-            <div id="client-dashboard" class="hidden space-y-8">
-                <!-- Welcome Banner & Quick Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-md">
-                        <p class="text-sm text-slate-400 font-medium">Available Balance</p>
-                        <h3 id="client-balance" class="text-3xl font-bold text-white mt-2">$0.00</h3>
-                        <div class="mt-4 flex items-center text-xs text-emerald-400 font-medium">
-                            <i class="fa-solid fa-arrow-trend-up mr-1"></i> Live Firebase Sync
-                        </div>
-                    </div>
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-md">
-                        <p class="text-sm text-slate-400 font-medium">Total Deposits</p>
-                        <h3 id="client-deposits" class="text-3xl font-bold text-white mt-2">$0.00</h3>
-                        <div class="mt-4 flex items-center text-xs text-slate-400 font-medium">
-                            <i class="fa-solid fa-wallet mr-1"></i> Primary Checking Account
-                        </div>
-                    </div>
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-md">
-                        <p class="text-sm text-slate-400 font-medium">Active Loans / Credit</p>
-                        <h3 id="client-credit" class="text-3xl font-bold text-white mt-2">$0.00</h3>
-                        <div class="mt-4 flex items-center text-xs text-brand-400 font-medium">
-                            <i class="fa-solid fa-shield-check mr-1"></i> Excellent Standing
-                        </div>
-                    </div>
-                </div>
+  <nav class="nav">
+    <a href="#" class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M7 19 24 8l17 11" stroke="currentColor" stroke-width="3"/>
+          <path d="M11 20v16M19 20v16M29 20v16M37 20v16M6 38h36"
+                stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+      <span class="brand-name">Cash Flow Bank</span>
+    </a>
 
-                <!-- Quick Actions & Transfer Section -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Transfer Card -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-md lg:col-span-1 space-y-4">
-                        <h3 class="text-lg font-bold text-white flex items-center">
-                            <i class="fa-solid fa-right-left mr-2 text-brand-500"></i> Quick Transfer
-                        </h3>
-                        <form id="transfer-form" onsubmit="handleTransfer(event)" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Recipient Account / Email</label>
-                                <input type="text" id="recipient" required placeholder="name@example.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Amount ($)</label>
-                                <input type="number" id="transfer-amount" step="0.01" min="1" required placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 rounded-lg text-sm transition">
-                                Send Funds
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Transaction History -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-md lg:col-span-2 space-y-4">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-bold text-white flex items-center">
-                                <i class="fa-solid fa-clock-rotate-left mr-2 text-brand-500"></i> Transaction History
-                            </h3>
-                            <button onclick="loadTransactions()" class="text-xs text-brand-400 hover:text-brand-300 font-medium">Refresh</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm text-slate-300">
-                                <thead class="bg-slate-900/50 text-xs uppercase text-slate-400 border-b border-slate-700">
-                                    <tr>
-                                        <th class="px-4 py-3">Description</th>
-                                        <th class="px-4 py-3">Date</th>
-                                        <th class="px-4 py-3">Status</th>
-                                        <th class="px-4 py-3 text-right">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="transaction-table-body" class="divide-y divide-slate-700">
-                                    <!-- Populated dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-slate-800 border-t border-slate-700 py-6 text-center text-xs text-slate-500">
-            &copy; 2026 Cashflowbank Inc. All rights reserved. Secured with Firebase Authentication & Firestore.
-        </footer>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#services">Services</a>
+      <a href="#security">Security</a>
+      <a href="#support">Support</a>
     </div>
 
-    <!-- Auth Modal -->
-    <div id="auth-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl relative space-y-6">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <div class="text-center space-y-2">
-                <div class="bg-brand-600 text-white p-3 rounded-xl inline-block shadow">
-                    <i class="fa-solid fa-vault text-2xl"></i>
-                </div>
-                <h3 id="modal-title" class="text-xl font-bold text-white">Sign In to Cashflowbank</h3>
-                <p class="text-xs text-slate-400">Enter your credentials to access your secure portal</p>
-            </div>
+    <div class="nav-buttons">
+      <button class="btn btn-light" onclick="openAuth('login')">Sign in</button>
+      <button class="btn btn-primary" onclick="openAuth('register')">Open account</button>
+    </div>
+  </nav>
 
-            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Email Address</label>
-                    <input type="email" id="auth-email" required placeholder="client@cashflowbank.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
-                    <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
-                </div>
-                <div id="auth-error" class="text-rose-400 text-xs hidden"></div>
-                <button type="submit" id="auth-submit-btn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 rounded-lg text-sm transition shadow">
-                    Sign In
-                </button>
-            </form>
+  <section id="home" class="hero">
 
-            <div class="text-center text-xs text-slate-400">
-                <span id="auth-switch-text">Don't have an account?</span>
-                <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-brand-400 hover:underline font-medium ml-1">Create one</button>
-            </div>
+    <div class="hero-copy">
+      <div class="kicker">
+        <span class="dot"></span>
+        Secure digital banking experience
+      </div>
+
+      <h1>Your money.<br><span>Your priorities.</span></h1>
+
+      <p>
+        A modern banking interface built around clear account information,
+        secure transfers, transaction visibility and convenient account management.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="openAuth('register')">
+          Open an account
+        </button>
+        <button class="btn btn-light" onclick="openAuth('login')">
+          Access your account
+        </button>
+      </div>
+
+      <div class="trust">
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                  stroke="currentColor" stroke-width="1.8"/>
+            <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+          Secure access
         </div>
+
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="5" y="10" width="14" height="10" rx="2"
+                  stroke="currentColor" stroke-width="1.8"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"
+                  stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+          Protected transactions
+        </div>
+
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="8.5"
+                    stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 7v5l3 2"
+                  stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round"/>
+          </svg>
+          24/7 account access
+        </div>
+      </div>
     </div>
 
-    <!-- JavaScript Application Logic with Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as fbSignOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateModel, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <div class="hero-art">
+      <div class="glow"></div>
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
 
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyBJkB9E3--LDg0Dh-NfPr-c_xuTapiqJyQ",
-          authDomain: "cashflowbank-8d390.firebaseapp.com",
-          projectId: "cashflowbank-8d390",
-          storageBucket: "cashflowbank-8d390.firebasestorage.app",
-          messagingSenderId: "797307517437",
-          appId: "1:797307517437:web:fc337a39bf2abdb6a28194"
-        };
+      <div class="building">
+        <div class="building-top"></div>
+      </div>
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+      <div class="float-card balance-float">
+        <div class="small-label">Available balance</div>
+        <div class="money">$48,250.00</div>
+        <div class="positive" style="font-size:10px">+8.4% this month</div>
 
-        let currentUser = null;
-        let isSignUpMode = false;
-        let clientBalance = 0.00;
-        let transactions = [];
+        <div class="mini-chart">
+          <svg viewBox="0 0 300 75" preserveAspectRatio="none">
+            <path d="M0 58 C30 55 35 43 58 50 S83 32 105 43
+                     S133 27 153 34 S181 18 202 26
+                     S230 12 252 20 S278 7 300 11"
+                  fill="none" stroke="#098451" stroke-width="3"
+                  stroke-linecap="round"/>
+            <path d="M0 58 C30 55 35 43 58 50 S83 32 105 43
+                     S133 27 153 34 S181 18 202 26
+                     S230 12 252 20 S278 7 300 11 V75 H0Z"
+                  fill="rgba(9,132,81,.08)"/>
+          </svg>
+        </div>
+      </div>
 
-        window.openAuthModal = function(mode = 'signin') {
-            isSignUpMode = (mode === 'signup');
-            updateModalUI();
-            document.getElementById('auth-modal').classList.remove('hidden');
-        }
+      <div class="float-card activity-float">
+        <div class="small-label">Monthly activity</div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <strong style="font-size:19px">$12,840</strong>
+          <span class="positive" style="font-size:9px">+12.6%</span>
+        </div>
+        <div style="height:45px;margin-top:10px">
+          <svg viewBox="0 0 220 45" preserveAspectRatio="none">
+            <path d="M0 35 25 31 45 34 70 22 94 28 117 15 140 20 164 9 188 14 220 4"
+                  fill="none" stroke="#0b9a5e" stroke-width="2.5"
+                  stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
 
-        window.closeAuthModal = function() {
-            document.getElementById('auth-modal').classList.add('hidden');
-            document.getElementById('auth-error').classList.add('hidden');
-        }
+      <div class="float-card security-float">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                stroke="currentColor" stroke-width="1.8"/>
+          <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        Protected account
+      </div>
+    </div>
 
-        window.toggleAuthMode = function() {
-            isSignUpMode = !isSignUpMode;
-            updateModalUI();
-        }
+  </section>
 
-        function updateModalUI() {
-            const title = document.getElementById('modal-title');
-            const btn = document.getElementById('auth-submit-btn');
-            const switchText = document.getElementById('auth-switch-text');
-            const switchBtn = document.getElementById('auth-switch-btn');
+  <section id="services" class="section alt">
+    <div class="section-head">
+      <span>Services</span>
+      <h2>Everything organized around your account.</h2>
+      <p>
+        A clean digital banking experience with the tools customers need
+        to understand and manage their account.
+      </p>
+    </div>
 
-            if (isSignUpMode) {
-                title.textContent = 'Create Cashflowbank Account';
-                btn.textContent = 'Register Account';
-                switchText.textContent = 'Already have an account?';
-                switchBtn.textContent = 'Sign In';
-            } else {
-                title.textContent = 'Sign In to Cashflowbank';
-                btn.textContent = 'Sign In';
-                switchText.textContent = "Don't have an account?";
-                switchBtn.textContent = 'Create one';
-            }
-        }
+    <div class="service-grid">
 
-        window.handleAuthSubmit = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-password').value;
+      <div class="service">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="5" width="18" height="15" rx="2"
+                  stroke="currentColor" stroke-width="1.8"/>
+            <path d="M3 9h18M7 15h4" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <h3>Account management</h3>
+        <p>View account details, balance information and account status from one dashboard.</p>
+      </div>
 
-            try {
-                if (isSignUpMode) {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    // Initialize Firestore user document
-                    await setDoc(doc(db, "users", userCredential.user.uid), {
-                        email: email,
-                        role: email.includes('admin') ? 'admin' : 'client',
-                        balance: 1000.00,
-                        status: 'Active'
-                    });
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                }
-                closeAuthModal();
-            } catch (error) {
-                showAuthError(error.message);
-            }
-        }
+      <div class="service">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 12h15M14 7l5 5-5 5" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Transfers</h3>
+        <p>Prepare account transfers with recipient information, transfer type and security PIN.</p>
+      </div>
 
-        function showAuthError(msg) {
-            const errEl = document.getElementById('auth-error');
-            errEl.textContent = msg;
-            errEl.classList.remove('hidden');
-        }
+      <div class="service">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 19V5M4 19h16" stroke="currentColor" stroke-width="1.8"/>
+            <path d="m7 15 3-4 3 2 5-7" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Cash-flow analysis</h3>
+        <p>Track account activity over time using the dashboard's visual analysis.</p>
+      </div>
 
-        window.signOutUser = async function() {
-            try {
-                await fbSignOut(auth);
-            } catch (err) {
-                console.error(err);
-            }
-        }
+      <div class="service">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 7v5l3 2" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Transaction history</h3>
+        <p>Review transfers and account activity with dates, amounts and statuses.</p>
+      </div>
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                // Fetch user data from Firestore
-                const userDocRef = doc(db, "users", user.uid);
-                const userDoc = await getDoc(userDocRef);
-                
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    clientBalance = userData.balance || 0;
-                    if (userData.role === 'admin' || user.email.includes('admin')) {
-                        window.location.href = 'admin.html';
-                        return;
-                    }
-                }
-                updateAppLayout();
-                loadTransactions();
-            } else {
-                currentUser = null;
-                updateAppLayout();
-            }
-        });
+      <div class="service">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                  stroke="currentColor" stroke-width="1.8"/>
+            <path d="M9 12h6M12 9v6" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <h3>Account security</h3>
+        <p>Use password, PIN and account verification controls to protect your account.</p>
+      </div>
 
-        function updateAppLayout() {
-            const landingView = document.getElementById('landing-view');
-            const clientDashboard = document.getElementById('client-dashboard');
-            const userDisplay = document.getElementById('user-display');
-            const authBtn = document.getElementById('auth-btn');
+      <div id="support" class="service">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 12a7 7 0 0 1 14 0v5a2 2 0 0 1-2 2h-3"
+                  stroke="currentColor" stroke-width="1.8"/>
+            <path d="M5 13H4a2 2 0 0 0 0 4h1M19 13h1a2 2 0 0 1 0 4h-1"
+                  stroke="currentColor" stroke-width="1.8"/>
+            <path d="M14 19h-2" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <h3>Customer support</h3>
+        <p>Get help through the integrated support experience.</p>
+      </div>
 
-            if (!currentUser) {
-                landingView.classList.remove('hidden');
-                clientDashboard.classList.add('hidden');
-                userDisplay.classList.add('hidden');
-                authBtn.textContent = 'Sign In / Register';
-                authBtn.onclick = () => openAuthModal('signin');
-            } else {
-                landingView.classList.add('hidden');
-                userDisplay.textContent = currentUser.email;
-                userDisplay.classList.remove('hidden');
-                authBtn.textContent = 'Sign Out';
-                authBtn.onclick = signOutUser;
-                clientDashboard.classList.remove('hidden');
-                renderClientData();
-            }
-        }
+    </div>
+  </section>
 
-        window.handleTransfer = async function(e) {
-            e.preventDefault();
-            const recipient = document.getElementById('recipient').value;
-            const amount = parseFloat(document.getElementById('transfer-amount').value);
+  <section id="security" class="section">
+    <div class="security-section">
 
-            if (amount > clientBalance) {
-                alert('Insufficient funds for this transfer.');
-                return;
-            }
+      <div class="security-visual">
+        <div class="security-ring"></div>
+        <div class="security-lock">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="5" y="10" width="14" height="10" rx="2"
+                  stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"
+                  stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="12" cy="15" r="1"
+                    fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
 
-            clientBalance -= amount;
-            transactions.unshift({
-                desc: `Transfer to ${recipient}`,
-                date: new Date().toLocaleDateString(),
-                status: 'Completed',
-                amount: amount,
-                type: 'debit'
-            });
+      <div class="security-copy">
+        <h2>Built around secure account access.</h2>
+        <p>
+          The interface separates customer account information,
+          authentication and transaction records so each part of the
+          experience can be managed independently.
+        </p>
 
-            document.getElementById('transfer-form').reset();
-            renderClientData();
-            alert(`Successfully transferred $${amount.toFixed(2)} to ${recipient}`);
-        }
+        <div class="security-list">
+          <div>
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Secure authentication
+          </div>
+          <div>
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Protected Firestore records
+          </div>
+          <div>
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Transfer confirmation
+          </div>
+          <div>
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Account-status verification
+          </div>
+        </div>
+      </div>
 
-        function renderClientData() {
-            document.getElementById('client-balance').textContent = `$${clientBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            document.getElementById('client-deposits').textContent = `$${clientBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            
-            const tbody = document.getElementById('transaction-table-body');
-            tbody.innerHTML = '';
-            if (transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-500">No recent transactions found.</td></tr>`;
-                return;
-            }
-            transactions.forEach(tx => {
-                const tr = document.createElement('tr');
-                const amountClass = tx.type === 'credit' ? 'text-emerald-400' : 'text-slate-200';
-                const amountPrefix = tx.type === 'credit' ? '+' : '-';
-                tr.innerHTML = `
-                    <td class="px-4 py-3 font-medium text-white">${tx.desc}</td>
-                    <td class="px-4 py-3 text-slate-400">${tx.date}</td>
-                    <td class="px-4 py-3"><span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded text-xs">${tx.status}</span></td>
-                    <td class="px-4 py-3 text-right ${amountClass} font-medium">${amountPrefix}$${tx.amount.toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+    </div>
+  </section>
 
-        window.loadTransactions = function() {
-            renderClientData();
-        }
-    </script>
+  <footer class="footer">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M7 19 24 8l17 11M11 20v16M19 20v16M29 20v16M37 20v16M6 38h36"
+                stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+      <span>Cash Flow Bank</span>
+    </div>
+    <small>© 2026 Cash Flow Bank. Interface prototype.</small>
+  </footer>
+
+</div>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal">
+  <div class="modal-box">
+
+    <button class="close" onclick="closeAuth()">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="m6 6 12 12M18 6 6 18"
+              stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <div class="modal-title">Welcome</div>
+    <div class="modal-sub">
+      Access your account or create a new customer profile.
+    </div>
+
+    <div class="tabs">
+      <button id="loginTab" class="tab active" onclick="switchAuth('login')">Sign in</button>
+      <button id="registerTab" class="tab" onclick="switchAuth('register')">Create account</button>
+    </div>
+
+    <!-- LOGIN -->
+    <form id="loginForm" class="auth-form active" onsubmit="loginUser(event)">
+
+      <div class="field">
+        <label>ACCOUNT NUMBER</label>
+        <input id="loginAccount" inputmode="numeric"
+               placeholder="Enter account number" required>
+      </div>
+
+      <div class="field password">
+        <label>PASSWORD</label>
+        <input id="loginPassword" type="password"
+               placeholder="Enter password" required>
+        <button type="button" class="eye"
+                onclick="togglePassword('loginPassword')">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 12s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6Z"
+                  stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="12" cy="12" r="2.5"
+                    stroke="currentColor" stroke-width="1.7"/>
+          </svg>
+        </button>
+      </div>
+
+      <button id="loginButton" class="btn btn-primary btn-wide" type="submit">
+        Sign in
+      </button>
+    </form>
+
+    <!-- REGISTER -->
+    <form id="registerForm" class="auth-form" onsubmit="registerUser(event)">
+
+      <div class="form-note">
+        After registration, the account remains pending until it is reviewed
+        and approved from the administration system.
+      </div>
+
+      <div class="grid2">
+
+        <div class="field full">
+          <label>FULL NAME</label>
+          <input id="regName" placeholder="Full name" required>
+        </div>
+
+        <div class="field">
+          <label>EMAIL</label>
+          <input id="regEmail" type="email"
+                 placeholder="Email address" required>
+        </div>
+
+        <div class="field">
+          <label>COUNTRY</label>
+          <select id="regCountry" required>
+            <option value="">Select country</option>
+            <option>Nigeria</option>
+            <option>Ghana</option>
+            <option>Kenya</option>
+            <option>South Africa</option>
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>Canada</option>
+            <option>India</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>ACCOUNT TYPE</label>
+          <select id="regType" required>
+            <option value="">Select account</option>
+            <option>Savings</option>
+            <option>Current</option>
+            <option>Business</option>
+            <option>Student</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>SECURITY PIN</label>
+          <input id="regPin" inputmode="numeric"
+                 maxlength="6" minlength="4"
+                 placeholder="4–6 digit PIN" required>
+        </div>
+
+        <div class="field full">
+          <label>PASSWORD</label>
+          <div class="password">
+            <input id="regPassword" type="password"
+                   minlength="6"
+                   placeholder="Create password" required>
+            <button type="button" class="eye"
+                    onclick="togglePassword('regPassword')">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M3 12s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6Z"
+                      stroke="currentColor" stroke-width="1.7"/>
+                <circle cx="12" cy="12" r="2.5"
+                        stroke="currentColor" stroke-width="1.7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field full">
+          <label>CONFIRM PASSWORD</label>
+          <input id="regConfirm" type="password"
+                 minlength="6"
+                 placeholder="Confirm password" required>
+        </div>
+
+      </div>
+
+      <button id="registerButton" class="btn btn-primary btn-wide" type="submit">
+        Create account
+      </button>
+    </form>
+
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<div class="app">
+
+  <aside id="sidebar" class="sidebar">
+
+    <div class="side-brand">
+      <div class="logo">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M7 19 24 8l17 11"
+                stroke="currentColor" stroke-width="3"/>
+          <path d="M11 20v16M19 20v16M29 20v16M37 20v16M6 38h36"
+                stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+      <div>
+        <strong>Cash Flow Bank</strong>
+        <small>Customer portal</small>
+      </div>
+    </div>
+
+    <div class="side-scroll">
+
+      <div class="side-label">MAIN</div>
+
+      <button class="side-link active" data-page="dashboard" onclick="showPage('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="4" y="4" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.7"/>
+          <rect x="14" y="4" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.7"/>
+          <rect x="4" y="14" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.7"/>
+          <rect x="14" y="14" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.7"/>
+        </svg>
+        Dashboard
+      </button>
+
+      <button class="side-link" data-page="summary" onclick="showPage('summary')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M3 9h18M7 15h4" stroke="currentColor" stroke-width="1.7"/>
+        </svg>
+        Account Summary
+      </button>
+
+      <button class="side-link" data-page="transfer" onclick="showPage('transfer')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M4 12h15M14 7l5 5-5 5"
+                stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Transfer
+      </button>
+
+      <button class="side-link" data-page="deposit" onclick="showPage('deposit')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 4v12M7 11l5 5 5-5M5 20h14"
+                stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Deposit
+      </button>
+
+      <button class="side-link" data-page="history" onclick="showPage('history')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        History
+      </button>
+
+      <div class="side-label">ACCOUNT</div>
+
+      <button class="side-link" data-page="profile" onclick="showPage('profile')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M5 20c.8-4 3-6 7-6s6.2 2 7 6"
+                stroke="currentColor" stroke-width="1.7"
+                stroke-linecap="round"/>
+        </svg>
+        Profile
+      </button>
+
+      <button class="side-link" data-page="kyc" onclick="showPage('kyc')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                stroke="currentColor" stroke-width="1.7"/>
+          <path d="m9 12 2 2 4-4"
+                stroke="currentColor" stroke-width="1.7"/>
+        </svg>
+        KYC Verification
+      </button>
+
+      <button class="side-link" data-page="settings" onclick="showPage('settings')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3"
+                  stroke="currentColor" stroke-width="1.7"/>
+          <path d="M19 13.5a7.5 7.5 0 0 0 0-3l2-1.2-2-3.3-2.1.9a8 8 0 0 0-2.5-1.5L14 3h-4l-.4 2.4a8 8 0 0 0-2.5 1.5L5 6 3 9.3l2 1.2a7.5 7.5 0 0 0 0 3l-2 1.2L5 18l2.1-.9a8 8 0 0 0 2.5 1.5L10 21h4l.4-2.4a8 8 0 0 0 2.5-1.5L19 18l2-3.3-2-1.2Z"
+                stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        Settings
+      </button>
+
+      <button class="side-link" data-page="support" onclick="showPage('support')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12a7 7 0 0 1 14 0v5a2 2 0 0 1-2 2h-3"
+                stroke="currentColor" stroke-width="1.7"/>
+          <path d="M5 13H4a2 2 0 0 0 0 4h1M19 13h1a2 2 0 0 1 0 4h-1"
+                stroke="currentColor" stroke-width="1.7"/>
+        </svg>
+        Support
+      </button>
+
+    </div>
+
+    <div class="side-bottom">
+      <div class="user-mini">
+        <div id="sideAvatar" class="avatar">CF</div>
+        <div>
+          <strong id="sideName">Customer</strong>
+          <small id="sideAccount">Account</small>
+        </div>
+      </div>
+
+      <button class="side-link" onclick="logoutUser()">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"
+                stroke="currentColor" stroke-width="1.7"/>
+          <path d="M14 8l4 4-4 4M18 12H9"
+                stroke="currentColor" stroke-width="1.7"
+                stroke-linecap="round"/>
+        </svg>
+        Sign out
+      </button>
+    </div>
+
+  </aside>
+
+  <div id="overlay" class="overlay" onclick="closeSidebar()"></div>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div class="top-left">
+        <button class="mobile-menu" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h16"
+                  stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <div class="top-title">
+          <strong id="topTitle">Dashboard</strong>
+          <small>Your account at a glance</small>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" onclick="showToast('Notifications','Your latest account notifications are shown here.')">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"
+                  stroke="currentColor" stroke-width="1.7"
+                  stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" onclick="showPage('profile')">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M5 20c.8-4 3-6 7-6s6.2 2 7 6"
+                  stroke="currentColor" stroke-width="1.7"
+                  stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section id="page-dashboard" class="page active">
+
+      <div class="page-head">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Monitor your account and recent activity.</p>
+        </div>
+        <div id="dashboardDate" class="page-date"></div>
+      </div>
+
+      <div class="dash-hero">
+        <div class="dash-content">
+
+          <div class="dash-kicker">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                    stroke="currentColor" stroke-width="1.7"/>
+              <path d="m9 12 2 2 4-4"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+            Account overview
+          </div>
+
+          <h2 id="welcomeName">Welcome back.</h2>
+
+          <p>
+            Keep track of your account, review activity and manage your
+            available banking options from one place.
+          </p>
+
+          <div class="hero-balance">
+            <small>Available balance</small>
+
+            <div class="balance-row">
+              <strong id="dashBalance">$0.00</strong>
+
+              <button class="balance-eye" onclick="toggleBalance()">
+                <svg id="balanceEyeIcon" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 12s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6Z"
+                        stroke="currentColor" stroke-width="1.7"/>
+                  <circle cx="12" cy="12" r="2.5"
+                          stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </button>
+            </div>
+
+            <div id="dashAccount" class="account-no">
+              Account number
+            </div>
+          </div>
+
+        </div>
+
+        <div class="dash-float one">
+          <div class="float-title">Account status</div>
+          <div id="dashStatus" class="float-value">Active</div>
+          <div class="float-meta">Account verified</div>
+        </div>
+
+        <div class="dash-float two">
+          <div class="float-title">Daily transfer limit</div>
+          <div id="dashLimit" class="float-value">$0</div>
+          <div id="dashLimitMeta" class="float-meta">$0 used today</div>
+        </div>
+      </div>
+
+      <div class="stats">
+
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">ACCOUNT TYPE</div>
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="5" width="18" height="15" rx="2"
+                      stroke="currentColor" stroke-width="1.7"/>
+              </svg>
+            </div>
+          </div>
+          <div id="statType" class="stat-value">—</div>
+          <div class="stat-meta">Current account</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">TRANSACTIONS</div>
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 12h15M14 7l5 5-5 5"
+                      stroke="currentColor" stroke-width="1.7"/>
+              </svg>
+            </div>
+          </div>
+          <div id="statTransactions" class="stat-value">0</div>
+          <div class="stat-meta green">Recorded activity</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">KYC STATUS</div>
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                      stroke="currentColor" stroke-width="1.7"/>
+              </svg>
+            </div>
+          </div>
+          <div id="statKyc" class="stat-value">Pending</div>
+          <div class="stat-meta">Verification status</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">ACCOUNT LIMIT</div>
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 19V5M4 19h16"
+                      stroke="currentColor" stroke-width="1.7"/>
+                <path d="m7 15 3-4 3 2 5-7"
+                      stroke="currentColor" stroke-width="1.7"/>
+              </svg>
+            </div>
+          </div>
+          <div id="statLimit" class="stat-value">$0</div>
+          <div class="stat-meta">Daily transfer limit</div>
+        </div>
+
+      </div>
+
+      <div class="content">
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Cash-flow analysis</div>
+              <div class="card-sub">Recent account activity</div>
+            </div>
+            <button class="text-btn" onclick="showPage('history')">View history</button>
+          </div>
+
+          <div class="chart">
+            <svg viewBox="0 0 800 225" preserveAspectRatio="none">
+              <path d="M0 185H800M0 135H800M0 85H800M0 35H800"
+                    stroke="#e8efeb" stroke-width="1"/>
+              <path id="dashboardChartArea"
+                    d="M0 185 L100 165 L200 170 L300 135 L400 145
+                       L500 100 L600 120 L700 75 L800 90 V225 H0Z"
+                    fill="rgba(9,132,81,.08)"/>
+              <path id="dashboardChart"
+                    d="M0 185 L100 165 L200 170 L300 135 L400 145
+                       L500 100 L600 120 L700 75 L800 90"
+                    fill="none"
+                    stroke="#098451"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+              <text x="0" y="218" class="chart-label">Jan</text>
+              <text x="100" y="218" class="chart-label">Feb</text>
+              <text x="200" y="218" class="chart-label">Mar</text>
+              <text x="300" y="218" class="chart-label">Apr</text>
+              <text x="400" y="218" class="chart-label">May</text>
+              <text x="500" y="218" class="chart-label">Jun</text>
+              <text x="600" y="218" class="chart-label">Jul</text>
+              <text x="700" y="218" class="chart-label">Aug</text>
+              <text x="770" y="218" class="chart-label">Sep</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Quick actions</div>
+              <div class="card-sub">Manage your account</div>
+            </div>
+          </div>
+
+          <div class="quick">
+
+            <button class="quick-btn" onclick="showPage('transfer')">
+              <div class="quick-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M4 12h15M14 7l5 5-5 5"
+                        stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </div>
+              <strong>Transfer</strong>
+              <span>Send money</span>
+            </button>
+
+            <button class="quick-btn" onclick="showPage('deposit')">
+              <div class="quick-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 4v12M7 11l5 5 5-5M5 20h14"
+                        stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </div>
+              <strong>Deposit</strong>
+              <span>Funding options</span>
+            </button>
+
+            <button class="quick-btn" onclick="showPage('profile')">
+              <div class="quick-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="8" r="3.5"
+                          stroke="currentColor" stroke-width="1.7"/>
+                  <path d="M5 20c.8-4 3-6 7-6s6.2 2 7 6"
+                        stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </div>
+              <strong>Profile</strong>
+              <span>Account details</span>
+            </button>
+
+            <button class="quick-btn" onclick="showPage('support')">
+              <div class="quick-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12a7 7 0 0 1 14 0v5a2 2 0 0 1-2 2h-3"
+                        stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </div>
+              <strong>Support</strong>
+              <span>Get assistance</span>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="content">
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Recent transactions</div>
+              <div class="card-sub">Latest account activity</div>
+            </div>
+            <button class="text-btn" onclick="showPage('history')">View all</button>
+          </div>
+
+          <div id="recentTransactions" class="transactions">
+            <div class="tx">
+              <div class="tx-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 4v12M7 11l5 5 5-5"
+                        stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </div>
+              <div class="tx-main">
+                <strong>No transactions yet</strong>
+                <span>Your account activity will appear here.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Account status</div>
+              <div class="card-sub">Your account setup</div>
+            </div>
+          </div>
+
+          <div class="status-list">
+
+            <div class="status-row">
+              <div class="status-check">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="m5 12 4 4L19 6"
+                        stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </div>
+              <div>
+                <strong>Customer profile</strong>
+                <span>Account information saved</span>
+              </div>
+              <span class="pill">READY</span>
+            </div>
+
+            <div class="status-row">
+              <div class="status-check">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="m5 12 4 4L19 6"
+                        stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </div>
+              <div>
+                <strong>Account access</strong>
+                <span>Authentication enabled</span>
+              </div>
+              <span class="pill">ACTIVE</span>
+            </div>
+
+            <div class="status-row">
+              <div class="status-check">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="m5 12 4 4L19 6"
+                        stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </div>
+              <div>
+                <strong>KYC verification</strong>
+                <span id="dashKycText">Awaiting status</span>
+              </div>
+              <span id="dashKycPill" class="pill">PENDING</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SUMMARY -->
+    <section id="page-summary" class="page">
+
+      <div class="page-head">
+        <div>
+          <h1>Account Summary</h1>
+          <p>Your account information in one place.</p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="5" width="18" height="15" rx="2"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Available balance</h3>
+          <p id="summaryBalance">$0.00</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 12h15M14 7l5 5-5 5"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Daily transfer limit</h3>
+          <p id="summaryLimit">$0.00</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Account status</h3>
+          <p id="summaryStatus">Active</p>
+        </div>
+
+      </div>
+
+      <div class="card" style="margin-top:15px">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Account details</div>
+            <div class="card-sub">Information associated with your profile</div>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="summary-row">
+            <span>Full name</span>
+            <strong id="summaryName">—</strong>
+          </div>
+          <div class="summary-row">
+            <span>Email</span>
+            <strong id="summaryEmail">—</strong>
+          </div>
+          <div class="summary-row">
+            <span>Account number</span>
+            <strong id="summaryAccount">—</strong>
+          </div>
+          <div class="summary-row">
+            <span>Account type</span>
+            <strong id="summaryType">—</strong>
+          </div>
+          <div class="summary-row">
+            <span>Country</span>
+            <strong id="summaryCountry">—</strong>
+          </div>
+          <div class="summary-row">
+            <span>Created</span>
+            <strong id="summaryCreated">—</strong>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TRANSFER -->
+    <section id="page-transfer" class="page">
+
+      <div class="page-head">
+        <div>
+          <h1>Transfer</h1>
+          <p>Send money from your available balance.</p>
+        </div>
+      </div>
+
+      <div class="transfer-layout">
+
+        <div class="transfer-card">
+
+          <div class="transfer-tabs">
+            <button id="instantTab" class="transfer-tab active"
+                    onclick="selectTransferType('instant')">
+              Instant transfer
+            </button>
+
+            <button id="wireTab" class="transfer-tab"
+                    onclick="selectTransferType('wire')">
+              Wire transfer
+            </button>
+          </div>
+
+          <div class="security-note">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                    stroke="currentColor" stroke-width="1.7"/>
+              <path d="m9 12 2 2 4-4"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+            <div>
+              <strong>Transfer security</strong>
+              <span>Your security PIN is required before a transfer can be submitted.</span>
+            </div>
+          </div>
+
+          <form onsubmit="submitTransfer(event)">
+
+            <div class="grid2">
+
+              <div class="field full">
+                <label>RECIPIENT NAME</label>
+                <input id="transferName" placeholder="Recipient full name" required>
+              </div>
+
+              <div class="field">
+                <label>BANK NAME</label>
+                <input id="transferBank" placeholder="Bank name" required>
+              </div>
+
+              <div class="field">
+                <label>ACCOUNT NUMBER</label>
+                <input id="transferAccount" inputmode="numeric"
+                       placeholder="Account number" required>
+              </div>
+
+              <div class="field">
+                <label>AMOUNT</label>
+                <input id="transferAmount" type="number"
+                       min="0.01" step="0.01"
+                       placeholder="0.00" required>
+              </div>
+
+              <div class="field">
+                <label>SECURITY PIN</label>
+                <input id="transferPin" type="password"
+                       inputmode="numeric" maxlength="6"
+                       placeholder="Enter PIN" required>
+              </div>
+
+              <div class="field full">
+                <label>NOTE</label>
+                <textarea id="transferNote"
+                          placeholder="Optional transfer note"></textarea>
+              </div>
+
+            </div>
+
+            <button id="transferButton"
+                    class="btn btn-primary btn-wide"
+                    type="submit">
+              Continue transfer
+            </button>
+
+          </form>
+
+        </div>
+
+        <div class="side-card">
+
+          <div class="card-head">
+            <div>
+              <div class="card-title">Transfer summary</div>
+              <div class="card-sub">Current limits</div>
+            </div>
+          </div>
+
+          <div class="summary">
+
+            <div class="summary-row">
+              <span>Available balance</span>
+              <strong id="transferBalance">$0.00</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Daily limit</span>
+              <strong id="transferDailyLimit">$0.00</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Used today</span>
+              <strong id="transferUsed">$0.00</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Remaining today</span>
+              <strong id="transferRemaining">$0.00</strong>
+            </div>
+
+          </div>
+
+          <div class="limit">
+            <div class="limit-head">
+              <strong>Daily limit usage</strong>
+              <span id="limitPercent">0%</span>
+            </div>
+            <div class="limit-bar">
+              <span id="limitFill"></span>
+            </div>
+          </div>
+
+          <div class="form-note" style="margin-top:18px">
+            Instant transfers are reflected immediately when successfully
+            submitted. Wire transfers are recorded as pending.
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- DEPOSIT -->
+    <section id="page-deposit" class="page">
+
+      <div class="page-head">
+        <div>
+          <h1>Deposit</h1>
+          <p>Available funding options for your account.</p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 4v12M7 11l5 5 5-5M5 20h14"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Bank deposit</h3>
+          <p>Use the funding instructions provided through your supported banking channel.</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="6" width="18" height="13" rx="2"
+                    stroke="currentColor" stroke-width="1.7"/>
+              <path d="M3 10h18" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Account funding</h3>
+          <p>Contact support if you need account-specific funding instructions.</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 12a7 7 0 0 1 14 0v5a2 2 0 0 1-2 2h-3"
+                    stroke="currentColor" stroke-width="1.7"/>
+              <path d="M5 13H4a2 2 0 0 0 0 4h1"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Need help?</h3>
+          <p>Open the support section or use the live chat for assistance.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- HISTORY -->
+    <section id="page-history" class="page">
+
+      <div class="page-head">
+        <div>
+          <h1>Transaction History</h1>
+          <p>Review your recorded account activity.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="history-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Recipient</th>
+                <th>Bank</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr>
+                <td colspan="6">No transactions yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PROFILE -->
+    <section id="page-profile" class="page">
+
+      <div class="page-head">
+        <div>
+          <h1>Profile</h1>
+          <p>Your customer profile and account information.</p>
+        </div>
+      </div>
+
+      <div class="profile-layout">
+
+        <div class="profile-card">
+          <div id="profileAvatar" class="profile-avatar">CF</div>
+          <h2 id="profileName">Customer</h2>
+          <p id="profileEmail">—</p>
+
+          <div class="detail" style="margin-top:20px">
+            <span>Account</span>
+            <strong id="profileAccount">—</strong>
+          </div>
+
+          <div class="detail">
+            <span>Status</span>
+            <strong id="profileStatus">—</strong>
+          </div>
+        </div>
+
+        <div class="profile-fields">
+
+          <div class="card-head">
+            <div>
+              <div class="card-title">Profile information</div>
+              <div class="card-sub">Information associated with your account</div>
+            </div>
+          </div>
+
+          <div class="detail">
+            <span>Full name</span>
+            <strong id="profileFullName">—</strong>
+          </div>
+
+          <div class="detail">
+            <span>Email</span>
+            <strong id="profileEmail2">—</strong>
+          </div>
+
+          <div class="detail">
+            <span>Country</span>
+            <strong id="profileCountry">—</strong>
+          </div>
+
+          <div class="detail">
+            <span>Account type</span>
+            <strong id="profileType">—</strong>
+          </div>
+
+          <div class="detail">
+            <span>Created</span>
+            <strong id="profileCreated">—</strong>
+          </div>
+
+          <div style="margin-top:20px">
+            <button class="btn btn-light" onclick="showToast('Profile','Profile information is managed from your account records.')">
+              Profile status
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- KYC -->
+    <section id="page-kyc" class="page">
+
+      <div class="page-head">
+        <div>
+          <h1>KYC Verification</h1>
+          <p>View your account verification status.</p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="8" r="3.5"
+                      stroke="currentColor" stroke-width="1.7"/>
+              <path d="M5 20c.8-4 3-6 7-6s6.2 2 7 6"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Identity profile</h3>
+          <p id="kycName">—</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                    stroke="currentColor" stroke-width="1.7"/>
+              <path d="m9 12 2 2 4-4"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Verification status</h3>
+          <p id="kycStatus">Pending</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="8.5"
+                      stroke="currentColor" stroke-width="1.7"/>
+              <path d="M12 7v5l3 2"
+                    stroke="currentColor" stroke-width="1.7"
+                    stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Account review</h3>
+          <p id="kycReview">Your current account verification information.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="page-settings" class="page">
+
+      <div class="page-head">
+        <div>
+          <h1>Settings</h1>
+          <p>Manage account preferences.</p>
+        </div>
+      </div>
+
+      <div class="settings">
+
+        <div class="setting">
+          <div>
+            <strong>Security notifications</strong>
+            <p>Show account security notifications.</p>
+          </div>
+          <button id="securitySwitch" class="switch on"
+                  onclick="toggleSetting(this,'securityNotifications')"></button>
+        </div>
+
+        <div class="setting">
+          <div>
+            <strong>Transfer confirmations</strong>
+            <p>Show a confirmation before transfers are submitted.</p>
+          </div>
+          <button id="transferSwitch" class="switch on"
+                  onclick="toggleSetting(this,'transferConfirmations')"></button>
+        </div>
+
+        <div class="setting">
+          <div>
+            <strong>Account activity alerts</strong>
+            <p>Keep activity notifications enabled.</p>
+          </div>
+          <button id="activitySwitch" class="switch on"
+                  onclick="toggleSetting(this,'activityAlerts')"></button>
+        </div>
+
+      </div>
+
+      <div class="card" style="margin-top:15px">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Security</div>
+            <div class="card-sub">Authentication controls</div>
+          </div>
+        </div>
+
+        <button class="btn btn-light"
+                onclick="showToast('Password','Password changes should be handled through your authenticated account settings.')">
+          Password settings
+        </button>
+      </div>
+
+    </section>
+
+    <!-- SUPPORT -->
+    <section id="page-support" class="page">
+
+      <div class="page-head">
+        <div>
+          <h1>Support</h1>
+          <p>Get assistance with your account experience.</p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 12a7 7 0 0 1 14 0v5a2 2 0 0 1-2 2h-3"
+                    stroke="currentColor" stroke-width="1.7"/>
+              <path d="M5 13H4a2 2 0 0 0 0 4h1M19 13h1a2 2 0 0 1 0 4h-1"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Live support</h3>
+          <p>Use the live chat button to contact support.</p>
+          <button class="btn btn-primary" style="margin-top:14px"
+                  onclick="showToast('Live support','Use the chat widget in the corner of the screen.')">
+            Open chat
+          </button>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9"
+                      stroke="currentColor" stroke-width="1.7"/>
+              <path d="M9.5 9a2.6 2.6 0 1 1 4.4 1.9c-1.2.8-1.9 1.3-1.9 2.6"
+                    stroke="currentColor" stroke-width="1.7"
+                    stroke-linecap="round"/>
+              <circle cx="12" cy="17" r="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3>Account questions</h3>
+          <p>Have your account number available when requesting assistance.</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"
+                    stroke="currentColor" stroke-width="1.7"/>
+              <path d="m9 12 2 2 4-4"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          </div>
+          <h3>Security</h3>
+          <p>Never share your password or security PIN with another person.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+</div>
+
+<div id="toast" class="toast">
+  <strong id="toastTitle">Message</strong>
+  <span id="toastMessage"></span>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBJkB9E3--LDg0Dh-NfPr-c_xuTapiqJyQ",
+  authDomain: "cashflowbank-8d390.firebaseapp.com",
+  projectId: "cashflowbank-8d390",
+  storageBucket: "cashflowbank-8d390.firebasestorage.app",
+  messagingSenderId: "797307517437",
+  appId: "1:797307517437:web:fc337a39bf2abdb6a28194"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+let customerData = null;
+let transactions = [];
+let transferType = "instant";
+let balanceHidden = false;
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.getElementById("loader").style.opacity = "0";
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+    }, 400);
+  }, 700);
+
+  updateDate();
+
+  auth.onAuthStateChanged(async user => {
+    currentUser = user || null;
+
+    if(user){
+      await loadCustomer(user.uid);
+    }else{
+      showLanding();
+    }
+  });
+});
+
+function showLanding(){
+  document.getElementById("landing").style.display = "block";
+  document.getElementById("app").style.display = "none";
+}
+
+function showApp(){
+  document.getElementById("landing").style.display = "none";
+  document.getElementById("app").style.display = "block";
+}
+
+function updateDate(){
+  const el = document.getElementById("dashboardDate");
+  if(el){
+    el.textContent = new Date().toLocaleDateString(undefined,{
+      weekday:"long",
+      year:"numeric",
+      month:"long",
+      day:"numeric"
+    });
+  }
+}
+
+/* =========================================================
+   AUTH MODAL
+========================================================= */
+
+function openAuth(type="login"){
+  document.getElementById("authModal").classList.add("show");
+  switchAuth(type);
+}
+
+function closeAuth(){
+  document.getElementById("authModal").classList.remove("show");
+}
+
+function switchAuth(type){
+  document.getElementById("loginTab").classList.toggle("active",type==="login");
+  document.getElementById("registerTab").classList.toggle("active",type==="register");
+
+  document.getElementById("loginForm").classList.toggle("active",type==="login");
+  document.getElementById("registerForm").classList.toggle("active",type==="register");
+}
+
+function togglePassword(id){
+  const input = document.getElementById(id);
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+/* =========================================================
+   ACCOUNT NUMBER
+========================================================= */
+
+function generateAccountNumber(){
+  let result = "";
+
+  for(let i=0;i<10;i++){
+    result += Math.floor(Math.random()*10);
+  }
+
+  return result;
+}
+
+async function createUniqueAccountNumber(){
+  for(let i=0;i<10;i++){
+    const account = generateAccountNumber();
+
+    const snap = await db.collection("customers")
+      .where("accountNumber","==",account)
+      .limit(1)
+      .get();
+
+    if(snap.empty){
+      return account;
+    }
+  }
+
+  throw new Error("Could not generate a unique account number.");
+}
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+async function registerUser(event){
+  event.preventDefault();
+
+  const button = document.getElementById("registerButton");
+
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim().toLowerCase();
+  const country = document.getElementById("regCountry").value;
+  const type = document.getElementById("regType").value;
+  const pin = document.getElementById("regPin").value.trim();
+  const password = document.getElementById("regPassword").value;
+  const confirm = document.getElementById("regConfirm").value;
+
+  if(password !== confirm){
+    showToast("Password error","The passwords do not match.");
+    return;
+  }
+
+  if(!/^\d{4,6}$/.test(pin)){
+    showToast("PIN error","Your security PIN must contain 4 to 6 digits.");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Creating account...";
+
+  try{
+
+    const accountNumber = await createUniqueAccountNumber();
+
+    const credential = await auth.createUserWithEmailAndPassword(
+      email,
+      password
+    );
+
+    const uid = credential.user.uid;
+
+    const createdAt = firebase.firestore.FieldValue.serverTimestamp();
+
+    await db.collection("customers").doc(uid).set({
+      uid,
+      fullName:name,
+      email,
+      country,
+      accountType:type,
+      accountNumber,
+
+      status:"pending",
+      kycStatus:"pending",
+
+      balance:0,
+      funds:0,
+      transactionLimit:0,
+      dailyTransferUsed:0,
+      dailyTransferDate:new Date().toISOString().slice(0,10),
+
+      securityPin:pin,
+
+      createdAt,
+
+      settings:{
+        securityNotifications:true,
+        transferConfirmations:true,
+        activityAlerts:true
+      }
+    });
+
+    await auth.signOut();
+
+    document.getElementById("registerForm").reset();
+
+    showToast(
+      "Account created",
+      "Your account number is " + accountNumber + ". Please wait for account review."
+    );
+
+    switchAuth("login");
+
+    document.getElementById("loginAccount").value = accountNumber;
+
+  }catch(error){
+
+    console.error(error);
+
+    let message = error.message || "Unable to create the account.";
+
+    if(error.code === "auth/email-already-in-use"){
+      message = "That email address is already registered.";
+    }
+
+    if(error.code === "auth/invalid-email"){
+      message = "Please enter a valid email address.";
+    }
+
+    if(error.code === "auth/weak-password"){
+      message = "Password must be at least 6 characters.";
+    }
+
+    if(error.code === "permission-denied"){
+      message = "Firestore permissions are blocking account creation.";
+    }
+
+    showToast("Registration failed",message);
+
+  }finally{
+    button.disabled = false;
+    button.textContent = "Create account";
+  }
+}
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function loginUser(event){
+  event.preventDefault();
+
+  const button = document.getElementById("loginButton");
+
+  const accountNumber =
+    document.getElementById("loginAccount").value.trim();
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  if(!/^\d{10}$/.test(accountNumber)){
+    showToast("Account number","Enter the 10-digit account number.");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Signing in...";
+
+  try{
+
+    const snap = await db.collection("customers")
+      .where("accountNumber","==",accountNumber)
+      .limit(1)
+      .get();
+
+    if(snap.empty){
+      throw new Error("Account number or password is incorrect.");
+    }
+
+    const data = snap.docs[0].data();
+
+    if(!data.email){
+      throw new Error("This account does not have a valid email address.");
+    }
+
+    await auth.signInWithEmailAndPassword(
+      data.email,
+      password
+    );
+
+    const status = String(data.status || "").toLowerCase();
+
+    if(status === "pending"){
+      await auth.signOut();
+
+      showToast(
+        "Account pending",
+        "Your account is waiting for review and approval."
+      );
+
+      return;
+    }
+
+    if(status === "declined" || status === "disabled"){
+      await auth.signOut();
+
+      showToast(
+        "Account unavailable",
+        "This account is not currently approved for access."
+      );
+
+      return;
+    }
+
+    closeAuth();
+
+  }catch(error){
+
+    console.error(error);
+
+    let message = error.message || "Unable to sign in.";
+
+    if(
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/invalid-credential" ||
+      error.code === "auth/user-not-found"
+    ){
+      message = "Account number or password is incorrect.";
+    }
+
+    if(error.code === "permission-denied"){
+      message = "Firebase permissions are blocking access to this account.";
+    }
+
+    showToast("Sign in failed",message);
+
+  }finally{
+    button.disabled = false;
+    button.textContent = "Sign in";
+  }
+}
+
+/* =========================================================
+   CUSTOMER DATA
+========================================================= */
+
+async function loadCustomer(uid){
+
+  try{
+
+    const doc = await db.collection("customers").doc(uid).get();
+
+    if(!doc.exists){
+      await auth.signOut();
+
+      showToast(
+        "Account record missing",
+        "Your authenticated account does not have a customer record."
+      );
+
+      return;
+    }
+
+    customerData = {
+      id:doc.id,
+      ...doc.data()
+    };
+
+    const status = String(customerData.status || "").toLowerCase();
+
+    if(status !== "approved" && status !== "active"){
+      await auth.signOut();
+
+      showToast(
+        "Account unavailable",
+        "Your account is currently " + (customerData.status || "pending") + "."
+      );
+
+      return;
+    }
+
+    showApp();
+    populateCustomerUI();
+    await loadTransactions();
+
+  }catch(error){
+
+    console.error(error);
+
+    if(error.code === "permission-denied"){
+      showToast(
+        "Firestore permission error",
+        "Your Firestore rules are blocking access to the customer record."
+      );
+    }else{
+      showToast(
+        "Account error",
+        error.message || "Unable to load your account."
+      );
+    }
+
+    await auth.signOut();
+  }
+}
+
+/* =========================================================
+   CUSTOMER UI
+========================================================= */
+
+function money(value){
+  const n = Number(value || 0);
+
+  return "$" + n.toLocaleString(undefined,{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+}
+
+function wholeMoney(value){
+  const n = Number(value || 0);
+
+  return "$" + n.toLocaleString(undefined,{
+    maximumFractionDigits:0
+  });
+}
+
+function initials(name){
+  return String(name || "Cash Flow")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0,2)
+    .map(x => x[0])
+    .join("")
+    .toUpperCase();
+}
+
+function populateCustomerUI(){
+
+  if(!customerData) return;
+
+  const name = customerData.fullName || "Customer";
+  const email = customerData.email || "—";
+  const account = customerData.accountNumber || "—";
+  const type = customerData.accountType || "—";
+  const country = customerData.country || "—";
+  const balance = Number(customerData.balance || 0);
+  const limit = Number(customerData.transactionLimit || 0);
+  const used = Number(customerData.dailyTransferUsed || 0);
+  const kyc = customerData.kycStatus || "pending";
+  const status = customerData.status || "approved";
+
+  document.getElementById("welcomeName").textContent =
+    "Welcome back, " + name.split(" ")[0] + ".";
+
+  document.getElementById("dashBalance").textContent =
+    balanceHidden ? "••••••" : money(balance);
+
+  document.getElementById("dashAccount").textContent =
+    "Account • " + account;
+
+  document.getElementById("dashStatus").textContent =
+    status.charAt(0).toUpperCase() + status.slice(1);
+
+  document.getElementById("dashLimit").textContent =
+    wholeMoney(limit);
+
+  document.getElementById("dashLimitMeta").textContent =
+    wholeMoney(used) + " used today";
+
+  document.getElementById("statType").textContent = type;
+  document.getElementById("statKyc").textContent =
+    capitalize(kyc);
+  document.getElementById("statLimit").textContent =
+    wholeMoney(limit);
+
+  document.getElementById("summaryBalance").textContent =
+    money(balance);
+  document.getElementById("summaryLimit").textContent =
+    money(limit);
+  document.getElementById("summaryStatus").textContent =
+    capitalize(status);
+
+  document.getElementById("summaryName").textContent = name;
+  document.getElementById("summaryEmail").textContent = email;
+  document.getElementById("summaryAccount").textContent = account;
+  document.getElementById("summaryType").textContent = type;
+  document.getElementById("summaryCountry").textContent = country;
+  document.getElementById("summaryCreated").textContent =
+    formatDate(customerData.createdAt);
+
+  document.getElementById("sideName").textContent = name;
+  document.getElementById("sideAccount").textContent = account;
+
+  const sideAvatar = document.getElementById("sideAvatar");
+  sideAvatar.textContent = initials(name);
+
+  document.getElementById("profileName").textContent = name;
+  document.getElementById("profileEmail").textContent = email;
+  document.getElementById("profileAccount").textContent = account;
+  document.getElementById("profileStatus").textContent = capitalize(status);
+
+  document.getElementById("profileFullName").textContent = name;
+  document.getElementById("profileEmail2").textContent = email;
+  document.getElementById("profileCountry").textContent = country;
+  document.getElementById("profileType").textContent = type;
+  document.getElementById("profileCreated").textContent =
+    formatDate(customerData.createdAt);
+
+  document.getElementById("kycName").textContent = name;
+  document.getElementById("kycStatus").textContent = capitalize(kyc);
+  document.getElementById("kycReview").textContent =
+    kyc.toLowerCase() === "verified"
+      ? "Your KYC status is verified."
+      : "Verification status is currently " + kyc + ".";
+
+  document.getElementById("dashKycText").textContent =
+    kyc.toLowerCase() === "verified"
+      ? "Identity verification completed"
+      : "Verification is " + kyc;
+
+  document.getElementById("dashKycPill").textContent =
+    String(kyc).toUpperCase();
+
+  document.getElementById("transferBalance").textContent = money(balance);
+  document.getElementById("transferDailyLimit").textContent = money(limit);
+  document.getElementById("transferUsed").textContent = money(used);
+
+  const remaining = Math.max(0,limit-used);
+
+  document.getElementById("transferRemaining").textContent =
+    money(remaining);
+
+  document.getElementById("limitPercent").textContent =
+    limit > 0
+      ? Math.min(100,(used/limit)*100).toFixed(0) + "%"
+      : "0%";
+
+  document.getElementById("limitFill").style.width =
+    limit > 0
+      ? Math.min(100,(used/limit)*100) + "%"
+      : "0%";
+}
+
+function capitalize(value){
+  const str = String(value || "pending");
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function formatDate(value){
+
+  if(!value) return "—";
+
+  if(value.toDate){
+    return value.toDate().toLocaleDateString();
+  }
+
+  const date = new Date(value);
+
+  if(isNaN(date.getTime())){
+    return "—";
+  }
+
+  return date.toLocaleDateString();
+}
+
+/* =========================================================
+   BALANCE
+========================================================= */
+
+function toggleBalance(){
+
+  balanceHidden = !balanceHidden;
+
+  if(customerData){
+    document.getElementById("dashBalance").textContent =
+      balanceHidden
+        ? "••••••"
+        : money(customerData.balance || 0);
+  }
+}
+
+/* =========================================================
+   TRANSACTIONS
+========================================================= */
+
+async function loadTransactions(){
+
+  if(!currentUser) return;
+
+  try{
+
+    const snap = await db.collection("customers")
+      .doc(currentUser.uid)
+      .collection("transactions")
+      .orderBy("createdAt","desc")
+      .limit(50)
+      .get();
+
+    transactions = snap.docs.map(doc => ({
+      id:doc.id,
+      ...doc.data()
+    }));
+
+    renderTransactions();
+
+  }catch(error){
+
+    console.error(error);
+
+    if(error.code === "failed-precondition"){
+      showToast(
+        "Transaction index required",
+        "Firestore needs an index for this transaction query."
+      );
+    }else if(error.code === "permission-denied"){
+      showToast(
+        "Transaction permission",
+        "Firestore rules are blocking transaction history."
+      );
+    }
+  }
+}
+
+function renderTransactions(){
+
+  const recent = document.getElementById("recentTransactions");
+  const history = document.getElementById("historyBody");
+
+  document.getElementById("statTransactions").textContent =
+    transactions.length;
+
+  if(!transactions.length){
+
+    recent.innerHTML = `
+      <div class="tx">
+        <div class="tx-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="8.5"
+                    stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 8v4l2.5 2"
+                  stroke="currentColor" stroke-width="1.7"
+                  stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="tx-main">
+          <strong>No transactions yet</strong>
+          <span>Your account activity will appear here.</span>
+        </div>
+      </div>
+    `;
+
+    history.innerHTML = `
+      <tr>
+        <td colspan="6">No transactions yet.</td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  recent.innerHTML = transactions.slice(0,5).map(tx => {
+
+    const outgoing = String(tx.direction || "out").toLowerCase() === "out";
+    const amount = Number(tx.amount || 0);
+
+    return `
+      <div class="tx">
+        <div class="tx-icon ${outgoing ? "out" : ""}">
+          ${outgoing ? `
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 20V8M7 13l5-5 5 5"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          ` : `
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 4v12M7 11l5 5 5-5"
+                    stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          `}
+        </div>
+
+        <div class="tx-main">
+          <strong>${escapeHtml(tx.recipientName || "Transfer")}</strong>
+          <span>${formatDate(tx.createdAt)} • ${escapeHtml(tx.type || "Transfer")}</span>
+        </div>
+
+        <div class="tx-amount">
+          <strong class="${outgoing ? "amount-out" : "amount-in"}">
+            ${outgoing ? "-" : "+"}${money(amount)}
+          </strong>
+          <small>${escapeHtml(tx.status || "completed")}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  history.innerHTML = transactions.map(tx => {
+
+    const outgoing = String(tx.direction || "out").toLowerCase() === "out";
+    const amount = Number(tx.amount || 0);
+    const status = String(tx.status || "completed").toLowerCase();
+
+    return `
+      <tr>
+        <td>${formatDate(tx.createdAt)}</td>
+        <td>${escapeHtml(tx.recipientName || "—")}</td>
+        <td>${escapeHtml(tx.bankName || "—")}</td>
+        <td>${escapeHtml(tx.type || "Transfer")}</td>
+        <td class="${outgoing ? "amount-out" : "amount-in"}">
+          ${outgoing ? "-" : "+"}${money(amount)}
+        </td>
+        <td>
+          <span class="status ${status}">
+            ${escapeHtml(status)}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+/* =========================================================
+   TRANSFER
+========================================================= */
+
+function selectTransferType(type){
+
+  transferType = type;
+
+  document.getElementById("instantTab")
+    .classList.toggle("active",type === "instant");
+
+  document.getElementById("wireTab")
+    .classList.toggle("active",type === "wire");
+}
+
+async function submitTransfer(event){
+
+  event.preventDefault();
+
+  if(!currentUser || !customerData){
+    showToast("Not signed in","Please sign in again.");
+    return;
+  }
+
+  const name = document.getElementById("transferName").value.trim();
+  const bank = document.getElementById("transferBank").value.trim();
+  const account = document.getElementById("transferAccount").value.trim();
+  const amount = Number(document.getElementById("transferAmount").value);
+  const pin = document.getElementById("transferPin").value.trim();
+  const note = document.getElementById("transferNote").value.trim();
+
+  if(!name || !bank || !account){
+    showToast("Transfer details","Complete all required recipient fields.");
+    return;
+  }
+
+  if(!Number.isFinite(amount) || amount <= 0){
+    showToast("Amount","Enter a valid transfer amount.");
+    return;
+  }
+
+  if(pin !== String(customerData.securityPin || "")){
+    showToast("Security PIN","The security PIN is incorrect.");
+    return;
+  }
+
+  const balance = Number(customerData.balance || 0);
+  const limit = Number(customerData.transactionLimit || 0);
+
+  let used = Number(customerData.dailyTransferUsed || 0);
+
+  const today = new Date().toISOString().slice(0,10);
+
+  if(customerData.dailyTransferDate !== today){
+    used = 0;
+  }
+
+  if(amount > balance){
+    showToast(
+      "Insufficient balance",
+      "The transfer amount is greater than the available balance."
+    );
+    return;
+  }
+
+  if(limit <= 0){
+    showToast(
+      "Transfer unavailable",
+      "Your account does not currently have a transfer limit configured."
+    );
+    return;
+  }
+
+  if(used + amount > limit){
+
+    const remaining = Math.max(0,limit-used);
+
+    showToast(
+      "Daily limit reached",
+      "You can transfer up to " + money(remaining) + " more today."
+    );
+
+    return;
+  }
+
+  const button = document.getElementById("transferButton");
+
+  button.disabled = true;
+  button.textContent = "Submitting...";
+
+  try{
+
+    /*
+      Important:
+      This client-side transaction is intended for the prototype.
+      Production financial systems should perform balance mutations
+      in trusted server-side code.
+    */
+
+    const customerRef =
+      db.collection("customers").doc(currentUser.uid);
+
+    const txRef =
+      customerRef.collection("transactions").doc();
+
+    const isInstant = transferType === "instant";
+
+    const newBalance =
+      isInstant ? balance - amount : balance;
+
+    const newUsed = used + amount;
+
+    const batch = db.batch();
+
+    const txData = {
+      uid:currentUser.uid,
+      recipientName:name,
+      bankName:bank,
+      recipientAccount:account,
+      amount,
+      note,
+      type:isInstant ? "instant" : "wire",
+      direction:"out",
+      status:isInstant ? "completed" : "pending",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    batch.set(txRef,txData);
+
+    /*
+      For the prototype:
+      - Instant transfers deduct immediately.
+      - Wire transfers remain pending and do not deduct here.
+    */
+
+    if(isInstant){
+
+      batch.update(customerRef,{
+        balance:newBalance,
+        dailyTransferUsed:newUsed,
+        dailyTransferDate:today
+      });
+
+    }else{
+
+      batch.update(customerRef,{
+        dailyTransferUsed:newUsed,
+        dailyTransferDate:today
+      });
+    }
+
+    await batch.commit();
+
+    customerData.balance = newBalance;
+    customerData.dailyTransferUsed = newUsed;
+    customerData.dailyTransferDate = today;
+
+    document.getElementById("transferName").value = "";
+    document.getElementById("transferBank").value = "";
+    document.getElementById("transferAccount").value = "";
+    document.getElementById("transferAmount").value = "";
+    document.getElementById("transferPin").value = "";
+    document.getElementById("transferNote").value = "";
+
+    await loadTransactions();
+    populateCustomerUI();
+
+    showToast(
+      isInstant ? "Transfer completed" : "Wire transfer submitted",
+      isInstant
+        ? money(amount) + " was deducted from the available balance."
+        : money(amount) + " was recorded as a pending wire transfer."
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    let message =
+      error.message || "The transfer could not be submitted.";
+
+    if(error.code === "permission-denied"){
+      message =
+        "Firestore permissions are blocking the transfer.";
+    }
+
+    showToast("Transfer failed",message);
+
+  }finally{
+
+    button.disabled = false;
+    button.textContent = "Continue transfer";
+  }
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+async function toggleSetting(button,key){
+
+  if(!currentUser || !customerData) return;
+
+  button.classList.toggle("on");
+
+  const enabled = button.classList.contains("on");
+
+  try{
+
+    await db.collection("customers")
+      .doc(currentUser.uid)
+      .update({
+        ["settings." + key]:enabled
+      });
+
+    if(!customerData.settings){
+      customerData.settings = {};
+    }
+
+    customerData.settings[key] = enabled;
+
+  }catch(error){
+
+    button.classList.toggle("on");
+
+    showToast(
+      "Settings error",
+      error.code === "permission-denied"
+        ? "Firestore rules are blocking this settings update."
+        : error.message
+    );
+  }
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+const pageTitles = {
+  dashboard:"Dashboard",
+  summary:"Account Summary",
+  transfer:"Transfer",
+  deposit:"Deposit",
+  history:"Transaction History",
+  profile:"Profile",
+  kyc:"KYC Verification",
+  settings:"Settings",
+  support:"Support"
+};
+
+function showPage(page){
+
+  document.querySelectorAll(".page").forEach(el => {
+    el.classList.remove("active");
+  });
+
+  const target = document.getElementById("page-" + page);
+
+  if(target){
+    target.classList.add("active");
+  }
+
+  document.querySelectorAll(".side-link[data-page]").forEach(btn => {
+    btn.classList.toggle(
+      "active",
+      btn.dataset.page === page
+    );
+  });
+
+  document.getElementById("topTitle").textContent =
+    pageTitles[page] || "Dashboard";
+
+  closeSidebar();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+}
+
+function closeSidebar(){
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+}
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logoutUser(){
+
+  try{
+    await auth.signOut();
+
+    customerData = null;
+    transactions = [];
+
+    showLanding();
+
+    showToast(
+      "Signed out",
+      "You have been signed out of your account."
+    );
+
+  }catch(error){
+
+    showToast(
+      "Sign out error",
+      error.message || "Unable to sign out."
+    );
+  }
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(title,message){
+
+  const toast = document.getElementById("toast");
+
+  document.getElementById("toastTitle").textContent = title;
+  document.getElementById("toastMessage").textContent = message;
+
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  },5000);
+}
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+/* =========================================================
+   TAWK.TO
+========================================================= */
+
+var Tawk_API = Tawk_API || {};
+var Tawk_LoadStart = new Date();
+
+(function(){
+  var s1 = document.createElement("script");
+  var s0 = document.getElementsByTagName("script")[0];
+
+  s1.async = true;
+  s1.src = "https://embed.tawk.to/6aad7099ecbade3448f2e8f6/default";
+  s1.charset = "UTF-8";
+  s1.setAttribute("crossorigin","*");
+
+  s0.parentNode.insertBefore(s1,s0);
+})();
+
+</script>
+
 </body>
 </html>
