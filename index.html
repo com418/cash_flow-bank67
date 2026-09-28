@@ -13,10 +13,26 @@
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
 
-  <style>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCBR4EQx9UXqGFgHKKcH_11VWhumpQ4KA",
+  authDomain: "cashflowbank-e7144.firebaseapp.com",
+  projectId: "cashflowbank-e7144",
+  storageBucket: "cashflowbank-e7144.firebasestorage.app",
+  messagingSenderId: "424318838821",
+  appId: "1:424318838821:web:308d3ac75c87eb99b637cc"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+console.log("Firebase connected:", firebase.app().options.projectId);
+</script>
     :root {
       --green: #075f38;
       --green-dark: #043b25;
