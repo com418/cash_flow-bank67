@@ -8,17 +8,44 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .floating-element {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .glow-sphere {
+            animation: pulseGlow 6s ease-in-out infinite;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden relative">
 
-    <!-- GLOBAL ANNOUNCEMENT BANNER -->
-    <div id="global-announcement" class="bg-blue-600 text-white px-4 py-2 text-xs font-semibold text-center hidden flex items-center justify-center space-x-2">
-        <i class="fa-solid fa-bullhorn"></i>
-        <span id="announcement-message">Welcome to Cashflowbank.</span>
+    <!-- FLOATING BACKGROUND GLOW SPHERES -->
+    <div class="absolute top-20 left-10 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none glow-sphere"></div>
+    <div class="absolute top-96 right-10 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none glow-sphere" style="animation-delay: 3s;"></div>
+
+    <!-- GLOBAL ANNOUNCEMENT & TICKER BAR -->
+    <div class="bg-slate-900 text-white px-4 py-2 text-xs flex justify-between items-center z-50 relative border-b border-slate-800">
+        <div id="global-announcement" class="hidden items-center space-x-2">
+            <i class="fa-solid fa-bullhorn text-blue-400"></i>
+            <span id="announcement-message">Welcome to Cashflowbank.</span>
+        </div>
+        <div class="flex items-center space-x-6 overflow-hidden whitespace-nowrap text-slate-400 mx-auto">
+            <span class="flex items-center space-x-1"><i class="fa-solid fa-circle text-emerald-500 text-[8px]"></i> <span class="text-white font-mono">EUR/USD: 1.0842</span></span>
+            <span class="flex items-center space-x-1"><i class="fa-solid fa-circle text-emerald-500 text-[8px]"></i> <span class="text-white font-mono">GBP/USD: 1.2710</span></span>
+            <span class="flex items-center space-x-1"><i class="fa-solid fa-circle text-emerald-500 text-[8px]"></i> <span class="text-white font-mono">USD/JPY: 154.20</span></span>
+        </div>
     </div>
 
     <!-- LANDING HERO SECTION (Visible when logged out) -->
-    <div id="landing-hero" class="min-h-screen flex flex-col justify-between">
+    <div id="landing-hero" class="min-h-screen flex flex-col justify-between relative z-10">
         
         <!-- Navbar -->
         <header class="max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center">
@@ -39,8 +66,20 @@
         <main class="max-w-7xl w-full mx-auto px-6 py-12 space-y-20">
             
             <!-- Top Split Grid (Hero + Auth Box) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
+                
+                <!-- Floating Glass UI Widget over Hero Text -->
+                <div class="absolute -top-10 left-0 hidden lg:flex items-center space-x-3 bg-white/80 backdrop-blur-md border border-slate-200/80 px-4 py-3 rounded-2xl shadow-xl floating-element">
+                    <div class="w-9 h-9 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-slate-400">Security Index</p>
+                        <p class="text-xs font-black text-slate-800">256-Bit SSL Encryption Active</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6 pt-6">
                     <span class="bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">Secure Institutional Banking</span>
                     <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight">
                         Smart Financial Growth for the <span class="text-blue-600">Modern Era</span>.
@@ -59,7 +98,13 @@
                 </div>
 
                 <!-- Interactive Auth Card Box on Hero -->
-                <div id="auth-card-container" class="bg-white max-w-md w-full mx-auto rounded-3xl shadow-2xl p-8 border border-slate-100">
+                <div id="auth-card-container" class="bg-white/90 backdrop-blur-xl max-w-md w-full mx-auto rounded-3xl shadow-2xl p-8 border border-slate-100 relative">
+                    
+                    <!-- Floating Badge on Auth Box -->
+                    <div class="absolute -top-4 -right-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg floating-element" style="animation-delay: 1.5s;">
+                        <i class="fa-solid fa-bolt mr-1"></i> Instant Setup
+                    </div>
+
                     <div class="text-center mb-6">
                         <h2 id="auth-form-title" class="text-2xl font-bold text-slate-900">Account Access</h2>
                         <p class="text-xs text-slate-400">Log in with your 10-digit account number</p>
@@ -126,19 +171,19 @@
 
             <!-- Extended Hero Metrics Bar -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-slate-200">
-                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
                     <h3 class="text-3xl font-black text-slate-900">$4.8B+</h3>
                     <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Secured Assets</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
                     <h3 class="text-3xl font-black text-blue-600">120K+</h3>
                     <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Active Accounts</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
                     <h3 class="text-3xl font-black text-slate-900">99.99%</h3>
                     <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">System Uptime</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
                     <h3 class="text-3xl font-black text-blue-600">24/7</h3>
                     <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Dedicated Support</p>
                 </div>
@@ -152,21 +197,21 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
                             <i class="fa-solid fa-globe"></i>
                         </div>
                         <h3 class="font-bold text-lg text-slate-900">Global Wire Transfers</h3>
                         <p class="text-slate-600 text-sm leading-relaxed">Send and receive funds across international borders instantaneously with transparent FX conversion rates.</p>
                     </div>
-                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <h3 class="font-bold text-lg text-slate-900">Military-Grade Encryption</h3>
                         <p class="text-slate-600 text-sm leading-relaxed">Your data and capital are protected by multi-layer authentication, pin verification, and real-time fraud monitoring.</p>
                     </div>
-                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
                             <i class="fa-solid fa-chart-line"></i>
                         </div>
@@ -295,6 +340,7 @@
                     const data = annDoc.data();
                     document.getElementById('announcement-message').innerText = data.message;
                     document.getElementById('global-announcement').classList.remove('hidden');
+                    document.getElementById('global-announcement').classList.add('flex');
                 }
             } catch(e) { console.error(e); }
         }
