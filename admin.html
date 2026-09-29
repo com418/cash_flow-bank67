@@ -95,10 +95,10 @@
                 </div>
             </div>
 
-            <!-- Two Column Layout: User Accounts & Pending Transfers -->
+            <!-- Two Column Layout: User Accounts & Announcements -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- User Accounts Table (Takes 2 cols) -->
+                <!-- User Accounts Table -->
                 <div class="lg:col-span-2 bg-slate-800 rounded-2xl border border-slate-700 shadow-sm overflow-hidden flex flex-col">
                     <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
                         <h3 class="font-bold text-white text-base flex items-center">
@@ -116,7 +116,6 @@
                                 </tr>
                             </thead>
                             <tbody id="admin-users-table" class="divide-y divide-slate-700 text-slate-200">
-                                <!-- Populated dynamically -->
                                 <tr>
                                     <td colspan="3" class="py-6 text-center text-slate-500">Loading user accounts...</td>
                                 </tr>
@@ -146,7 +145,7 @@
                     <div class="bg-gradient-to-br from-amber-500/10 to-slate-800 p-6 rounded-2xl border border-amber-500/20 shadow-sm">
                         <h4 class="font-bold text-amber-400 text-sm mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Security Protocol</h4>
                         <p class="text-xs text-slate-300 leading-relaxed">
-                            Any manual modification of user balances or overriding transaction authorization logs is permanently recorded in audit streams for compliance verification.
+                            Authorized strictly for UID: <code class="text-amber-300 bg-slate-900 px-1 py-0.5 rounded">MhGysrBmxXUFGjlgzjH8NNVpBkY2</code>. All balance modifications are logged securely.
                         </p>
                     </div>
                 </div>
@@ -159,7 +158,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Your Firebase Configuration
         const firebaseConfig = {
@@ -176,6 +175,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Designated Admin UID constraint
+        const ADMIN_UID = "MhGysrBmxXUFGjlgzjH8NNVpBkY2";
+
         // Admin Login Handler
         window.handleAdminLogin = async function(e) {
             e.preventDefault();
@@ -184,11 +186,7 @@
             const errorBox = document.getElementById('admin-auth-error');
 
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                
-                // Optional check: verify if the logged in user is admin domain or email
-                // For safety demonstration, we allow any valid credentials or you can check if email includes admin
-                loadAdminData();
+                await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
                 errorBox.innerText = error.message;
                 errorBox.classList.remove('hidden');
@@ -200,17 +198,22 @@
             await signOut(auth);
         };
 
-        // Auth State Observer
-        onAuthStateChanged(auth, (user) => {
+        // Auth State Observer with strict UID check
+        onAuthStateChanged(auth, async (user) => {
             const authSection = document.getElementById('admin-auth-section');
             const dashboardSection = document.getElementById('admin-dashboard-section');
             const adminUserDisplay = document.getElementById('admin-user-display');
 
             if (user) {
-                authSection.classList.add('hidden');
-                dashboardSection.classList.remove('hidden');
-                adminUserDisplay.innerText = user.email;
-                loadAdminData();
+                if (user.uid === ADMIN_UID) {
+                    authSection.classList.add('hidden');
+                    dashboardSection.classList.remove('hidden');
+                    adminUserDisplay.innerText = user.email;
+                    loadAdminData();
+                } else {
+                    alert("Access Denied: This account is not authorized as system administrator.");
+                    await signOut(auth);
+                }
             } else {
                 authSection.classList.remove('hidden');
                 dashboardSection.classList.add('hidden');
