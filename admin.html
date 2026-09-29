@@ -110,8 +110,8 @@
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700">
-                                    <th class="py-3 px-6">Client Email</th>
-                                    <th class="py-3 px-6">Status / Balance</th>
+                                    <th class="py-3 px-6">Client Info / Account</th>
+                                    <th class="py-3 px-6">Balance & Date</th>
                                     <th class="py-3 px-6 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -228,12 +228,13 @@
                     const data = userDoc.data();
                     const balance = data.balance || 0;
                     const status = data.status || 'pending';
+                    const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'N/A';
                     
                     if(status === 'pending') pendingCount++;
                     if(status === 'approved') totalLiquidity += balance;
 
                     let statusBadge = '';
-                    if(status === 'pending') statusBadge = '<span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded text-[10px] font-bold">Pending Approval</span>';
+                    if(status === 'pending') statusBadge = '<span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded text-[10px] font-bold">Pending</span>';
                     else if(status === 'frozen') statusBadge = '<span class="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded text-[10px] font-bold">Frozen</span>';
                     else statusBadge = '<span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded text-[10px] font-bold">Active</span>';
 
@@ -241,16 +242,19 @@
                     row.className = "hover:bg-slate-700/30 transition";
                     row.innerHTML = `
                         <td class="py-3 px-6 font-medium text-white">
-                            ${data.email || userDoc.id}
+                            <div>${data.email || userDoc.id}</div>
+                            <div class="text-xs text-slate-400 font-mono mt-0.5">Acc: ${data.accountNumber || 'N/A'}</div>
                             <div class="mt-1">${statusBadge}</div>
                         </td>
-                        <td class="py-3 px-6 font-semibold text-slate-300">
-                            $${balance.toLocaleString('en-US', {minimumFractionDigits: 2})}
+                        <td class="py-3 px-6">
+                            <div class="font-semibold text-emerald-400">$${balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                            <div class="text-xs text-slate-400 mt-1">Created: ${createdAt}</div>
                         </td>
-                        <td class="py-3 px-6 text-right space-x-1">
+                        <td class="py-3 px-6 text-right space-x-1 space-y-1">
                             ${status === 'pending' ? `<button onclick="updateUserStatus('${userDoc.id}', 'approved')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Approve</button>` : ''}
                             ${status !== 'frozen' ? `<button onclick="updateUserStatus('${userDoc.id}', 'frozen')" class="bg-amber-600 hover:bg-amber-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Freeze</button>` : `<button onclick="updateUserStatus('${userDoc.id}', 'approved')" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Unfreeze</button>`}
-                            <button onclick="adjustUserBalance('${userDoc.id}', ${balance})" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Edit Balance</button>
+                            <button onclick="adjustUserBalance('${userDoc.id}', ${balance})" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Balance</button>
+                            <button onclick="changeAccountDate('${userDoc.id}', '${data.createdAt || ''}')" class="bg-slate-700 hover:bg-slate-600 text-blue-300 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Change Date</button>
                             <button onclick="deleteUserAccount('${userDoc.id}')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Delete</button>
                         </td>
                     `;
@@ -288,6 +292,27 @@
                 loadAdminData();
             } catch(err) {
                 alert("Error: " + err.message);
+            }
+        };
+
+        window.changeAccountDate = async function(userId, currentDateStr) {
+            const currentFormatted = currentDateStr ? currentDateStr.split('T')[0] : new Date().toISOString().split('T')[0];
+            const newDateInput = prompt("Enter new creation date (Format: YYYY-MM-DD):", currentFormatted);
+            if(!newDateInput) return;
+
+            // Validate date format or parse it safely into ISO format
+            const parsedDate = new Date(newDateInput);
+            if(isNaN(parsedDate.getTime())) {
+                alert("Invalid date format. Please use YYYY-MM-DD.");
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, "users", userId), { createdAt: parsedDate.toISOString() });
+                alert("Account creation date successfully updated!");
+                loadAdminData();
+            } catch(err) {
+                alert("Error updating date: " + err.message);
             }
         };
 
