@@ -19,6 +19,7 @@
 
     <!-- LANDING HERO SECTION (Visible when logged out) -->
     <div id="landing-hero" class="min-h-screen flex flex-col justify-between">
+        
         <!-- Navbar -->
         <header class="max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center">
             <div class="flex items-center space-x-3">
@@ -34,93 +35,150 @@
             </div>
         </header>
 
-        <!-- Hero Content -->
-        <main class="max-w-7xl w-full mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div class="space-y-6">
-                <span class="bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">Secure Institutional Banking</span>
-                <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight">
-                    Smart Financial Growth for the <span class="text-blue-600">Modern Era</span>.
-                </h1>
-                <p class="text-slate-600 text-base md:text-lg leading-relaxed">
-                    Experience lightning-fast wire transfers, institutional-grade security, and round-the-clock liquidity management tailored for your enterprise and personal assets.
-                </p>
-                <div class="flex space-x-4 pt-2">
-                    <button onclick="scrollToAuth('register')" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3.5 rounded-xl font-bold text-sm shadow-xl transition">
-                        Open an Account
-                    </button>
-                    <button onclick="scrollToAuth('login')" class="bg-white hover:bg-slate-100 text-slate-900 border border-slate-200 px-6 py-3.5 rounded-xl font-bold text-sm transition">
-                        Account Sign In
-                    </button>
-                </div>
-            </div>
-
-            <!-- Interactive Auth Card Box on Hero -->
-            <div id="auth-card-container" class="bg-white max-w-md w-full mx-auto rounded-3xl shadow-2xl p-8 border border-slate-100">
-                <div class="text-center mb-6">
-                    <h2 id="auth-form-title" class="text-2xl font-bold text-slate-900">Account Access</h2>
-                    <p class="text-xs text-slate-400">Log in with your 10-digit account number</p>
+        <!-- Main Hero Section Content -->
+        <main class="max-w-7xl w-full mx-auto px-6 py-12 space-y-20">
+            
+            <!-- Top Split Grid (Hero + Auth Box) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <span class="bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">Secure Institutional Banking</span>
+                    <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight">
+                        Smart Financial Growth for the <span class="text-blue-600">Modern Era</span>.
+                    </h1>
+                    <p class="text-slate-600 text-base md:text-lg leading-relaxed">
+                        Experience lightning-fast wire transfers, institutional-grade security, and round-the-clock liquidity management tailored for your enterprise and personal assets.
+                    </p>
+                    <div class="flex space-x-4 pt-2">
+                        <button onclick="scrollToAuth('register')" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3.5 rounded-xl font-bold text-sm shadow-xl transition">
+                            Open an Account
+                        </button>
+                        <button onclick="scrollToAuth('login')" class="bg-white hover:bg-slate-100 text-slate-900 border border-slate-200 px-6 py-3.5 rounded-xl font-bold text-sm transition">
+                            Account Sign In
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Tabs -->
-                <div class="flex border-b border-slate-200 mb-6">
-                    <button onclick="switchTab('login')" id="tab-login" class="flex-1 pb-3 text-sm font-semibold text-blue-600 border-b-2 border-blue-600 transition">Sign In</button>
-                    <button onclick="switchTab('register')" id="tab-register" class="flex-1 pb-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent transition">Register</button>
-                </div>
+                <!-- Interactive Auth Card Box on Hero -->
+                <div id="auth-card-container" class="bg-white max-w-md w-full mx-auto rounded-3xl shadow-2xl p-8 border border-slate-100">
+                    <div class="text-center mb-6">
+                        <h2 id="auth-form-title" class="text-2xl font-bold text-slate-900">Account Access</h2>
+                        <p class="text-xs text-slate-400">Log in with your 10-digit account number</p>
+                    </div>
 
-                <!-- Login Form (Account Number & Password) -->
-                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">10-Digit Account Number</label>
-                        <input type="text" id="login-account-number" placeholder="e.g. 1049283921" maxlength="10" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono">
+                    <!-- Tabs -->
+                    <div class="flex border-b border-slate-200 mb-6">
+                        <button onclick="switchTab('login')" id="tab-login" class="flex-1 pb-3 text-sm font-semibold text-blue-600 border-b-2 border-blue-600 transition">Sign In</button>
+                        <button onclick="switchTab('register')" id="tab-register" class="flex-1 pb-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent transition">Register</button>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
-                        <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition">Access Dashboard</button>
-                </form>
 
-                <!-- Expanded Register Form -->
-                <form id="register-form" onsubmit="handleRegister(event)" class="space-y-3 hidden">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Full Name</label>
-                        <input type="text" id="reg-name" required placeholder="John Doe" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Email Address</label>
-                        <input type="email" id="reg-email" required placeholder="john@example.com" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
+                    <!-- Login Form (Account Number & Password) -->
+                    <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Account Type</label>
-                            <select id="reg-account-type" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-white">
-                                <option value="Checking">Checking</option>
-                                <option value="Savings">Savings</option>
-                                <option value="Business">Business</option>
-                            </select>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">10-Digit Account Number</label>
+                            <input type="text" id="login-account-number" placeholder="e.g. 1049283921" maxlength="10" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono">
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Country</label>
-                            <input type="text" id="reg-country" required placeholder="United States" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
-                            <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                            <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition">Access Dashboard</button>
+                    </form>
+
+                    <!-- Expanded Register Form -->
+                    <form id="register-form" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Full Name</label>
+                            <input type="text" id="reg-name" required placeholder="John Doe" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">4-Digit PIN</label>
-                            <input type="password" id="reg-pin" maxlength="4" required placeholder="1234" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono">
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Email Address</label>
+                            <input type="email" id="reg-email" required placeholder="john@example.com" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
                         </div>
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition mt-2">Submit Application</button>
-                </form>
-                <p id="auth-error" class="text-rose-500 text-xs mt-4 text-center hidden"></p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Account Type</label>
+                                <select id="reg-account-type" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-white">
+                                    <option value="Checking">Checking</option>
+                                    <option value="Savings">Savings</option>
+                                    <option value="Business">Business</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Country</label>
+                                <input type="text" id="reg-country" required placeholder="United States" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
+                                <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">4-Digit PIN</label>
+                                <input type="password" id="reg-pin" maxlength="4" required placeholder="1234" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition mt-2">Submit Application</button>
+                    </form>
+                    <p id="auth-error" class="text-rose-500 text-xs mt-4 text-center hidden"></p>
+                </div>
             </div>
+
+            <!-- Extended Hero Metrics Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-slate-200">
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                    <h3 class="text-3xl font-black text-slate-900">$4.8B+</h3>
+                    <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Secured Assets</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                    <h3 class="text-3xl font-black text-blue-600">120K+</h3>
+                    <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Active Accounts</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                    <h3 class="text-3xl font-black text-slate-900">99.99%</h3>
+                    <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">System Uptime</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                    <h3 class="text-3xl font-black text-blue-600">24/7</h3>
+                    <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Dedicated Support</p>
+                </div>
+            </div>
+
+            <!-- Extended Services Overview Grid -->
+            <div class="space-y-12 py-12">
+                <div class="text-center max-w-2xl mx-auto space-y-3">
+                    <h2 class="text-3xl font-black text-slate-900">Built for Enterprise & Personal Excellence</h2>
+                    <p class="text-slate-600 text-sm">Manage your finances with world-class tools designed for speed, transparency, and absolute safety.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900">Global Wire Transfers</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Send and receive funds across international borders instantaneously with transparent FX conversion rates.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900">Military-Grade Encryption</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Your data and capital are protected by multi-layer authentication, pin verification, and real-time fraud monitoring.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900">Advanced Liquidity</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Access high-yield savings, checking reserves, and customized business liquidity options seamlessly.</p>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
-        <footer class="text-center py-6 text-xs text-slate-400 border-t border-slate-100">
+        <footer class="text-center py-8 text-xs text-slate-400 border-t border-slate-200">
             &copy; 2026 Cashflowbank. Member FDIC. All rights reserved.
         </footer>
     </div>
@@ -272,7 +330,6 @@
             document.getElementById('auth-card-container').scrollIntoView({ behavior: 'smooth' });
         };
 
-        // Register Action with expanded fields
         window.handleRegister = async function(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
