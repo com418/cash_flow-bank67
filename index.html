@@ -243,7 +243,6 @@
                         <p id="greeting-text" class="text-slate-500 dark:text-slate-400 text-sm font-medium">Good Evening, --</p>
                     </div>
 
-                    <!-- TOTAL BALANCE HERO CARD -->
                     <div class="bg-[#0e1d35] text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden space-y-6">
                         <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
@@ -285,7 +284,6 @@
                         </div>
                     </div>
 
-                    <!-- CURRENT ACCOUNT CARD -->
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
                         <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
                             <div class="flex items-center space-x-3">
@@ -305,7 +303,6 @@
                         </div>
                     </div>
 
-                    <!-- TRANSACTION LEDGER -->
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
                         <h3 class="font-bold text-slate-900 dark:text-white text-base">Account Activity Ledger</h3>
                         <div class="space-y-3" id="transaction-list">
@@ -327,15 +324,26 @@
                     </div>
                 </div>
 
-                <!-- VIEW 3: TRANSFER -->
+                <!-- VIEW 3: TRANSFER (WITH LIVE RECIPIENT VALIDATION) -->
                 <div id="view-transfer" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto space-y-6">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Wire Transfer Gateway</h3>
                         <form onsubmit="executeWireTransfer(event)" class="space-y-4">
-                            <div><label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Recipient Account Number (10 Digits)</label><input type="text" id="transfer-acc" maxlength="10" required placeholder="20xxxxxxxx" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white font-mono text-sm"></div>
-                            <div><label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Transfer Amount ($)</label><input type="number" step="0.01" id="transfer-amount" required placeholder="0.00" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white font-mono text-lg"></div>
-                            <div><label class="block text-xs font-semibold uppercase text-slate-500 mb-1">4-Digit PIN Authorization</label><input type="password" id="transfer-pin" maxlength="4" required placeholder="••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white font-mono text-sm"></div>
-                            <button type="submit" class="w-full bg-rose-900 hover:bg-rose-950 text-white py-3.5 rounded-xl font-bold text-sm shadow transition">Authorize & Send Funds</button>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Recipient Account Number (10 Digits)</label>
+                                <input type="text" id="transfer-acc" maxlength="10" oninput="verifyRecipientAccount(this.value)" required placeholder="20xxxxxxxx" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white font-mono text-sm">
+                                <!-- Live Recipient Verification Feedback Box -->
+                                <div id="recipient-feedback" class="mt-2 text-xs p-3 rounded-xl hidden"></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Transfer Amount ($)</label>
+                                <input type="number" step="0.01" id="transfer-amount" required placeholder="0.00" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white font-mono text-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">4-Digit PIN Authorization</label>
+                                <input type="password" id="transfer-pin" maxlength="4" required placeholder="••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white font-mono text-sm">
+                            </div>
+                            <button type="submit" id="transfer-submit-btn" disabled class="w-full bg-slate-400 cursor-not-allowed text-white py-3.5 rounded-xl font-bold text-sm shadow transition">Verify Recipient to Proceed</button>
                         </form>
                     </div>
                 </div>
@@ -486,6 +494,60 @@
             }
         };
 
+        // OPTION 2: LIVE RECIPIENT ACCOUNT VALIDATION
+        window.verifyRecipientAccount = async function(accountNum) {
+            const feedbackBox = document.getElementById('recipient-feedback');
+            const submitBtn = document.getElementById('transfer-submit-btn');
+            
+            if(accountNum.length !== 10) {
+                feedbackBox.classList.add('hidden');
+                submitBtn.disabled = true;
+                submitBtn.className = "w-full bg-slate-400 cursor-not-allowed text-white py-3.5 rounded-xl font-bold text-sm shadow transition";
+                submitBtn.innerText = "Verify Recipient to Proceed";
+                return;
+            }
+
+            if(currentUserData && currentUserData.accountNumber === accountNum) {
+                feedbackBox.className = "mt-2 text-xs p-3 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 flex items-center space-x-2";
+                feedbackBox.innerHTML = `<span>⚠️ You cannot transfer funds to your own active account.</span>`;
+                feedbackBox.classList.remove('hidden');
+                submitBtn.disabled = true;
+                return;
+            }
+
+            try {
+                feedbackBox.className = "mt-2 text-xs p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center space-x-2";
+                feedbackBox.innerHTML = `<span>🔍 Verifying account registry...</span>`;
+                feedbackBox.classList.remove('hidden');
+
+                const q = query(collection(db, "users"), where("accountNumber", "==", accountNum));
+                const snap = await getDocs(q);
+
+                if(!snap.empty) {
+                    let recipientName = "";
+                    let recipientBank = "";
+                    snap.forEach(d => {
+                        recipientName = d.data().name;
+                        recipientBank = d.data().country || "OakbridgeCU Global";
+                    });
+
+                    feedbackBox.className = "mt-2 text-xs p-3 rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 font-medium";
+                    feedbackBox.innerHTML = `✅ <strong>Verified Recipient:</strong> ${recipientName} (${recipientBank})`;
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.className = "w-full bg-rose-900 hover:bg-rose-950 text-white py-3.5 rounded-xl font-bold text-sm shadow transition";
+                    submitBtn.innerText = "Authorize & Send Funds";
+                } else {
+                    feedbackBox.className = "mt-2 text-xs p-3 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400";
+                    feedbackBox.innerHTML = `❌ Unregistered or invalid account number.`;
+                    submitBtn.disabled = true;
+                }
+            } catch(err) {
+                console.error(err);
+                feedbackBox.innerHTML = `❌ Error verifying account.`;
+            }
+        };
+
         window.handleRegister = async function(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
@@ -581,9 +643,6 @@
                         document.getElementById('nav-avatar-img').src = currentUserData.avatarUrl;
                         document.getElementById('nav-avatar-img').classList.remove('hidden');
                         document.getElementById('nav-avatar-icon').classList.add('hidden');
-                        document.getElementById('sidebar-avatar-img').src = currentUserData.avatarUrl;
-                        document.getElementById('sidebar-avatar-img').classList.remove('hidden');
-                        document.getElementById('sidebar-avatar-icon').classList.add('hidden');
                     }
 
                     const txList = document.getElementById('transaction-list');
