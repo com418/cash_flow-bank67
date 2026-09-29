@@ -128,7 +128,7 @@
     <!-- MAIN APP DASHBOARD -->
     <div id="dashboard-section" class="hidden min-h-screen flex flex-col md:flex-row relative">
         
-        <!-- SIDE NAVIGATION DRAWER (FIXED MOBILE OVERLAY) -->
+        <!-- SIDE NAVIGATION DRAWER -->
         <aside id="side-drawer" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:static w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 select-none transition-transform duration-300 z-50 shadow-2xl md:shadow-none">
             <div>
                 <div class="p-6 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
@@ -154,6 +154,10 @@
                             <button onclick="switchTab('summary')" id="nav-summary" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
                                 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
                                 <span>Account Summary</span>
+                            </button>
+                            <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                                <span>Analytics</span>
                             </button>
                             <button onclick="switchTab('statements')" id="nav-statements" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
                                 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
@@ -336,7 +340,65 @@
                     </div>
                 </div>
 
-                <!-- VIEW 3: PDF STATEMENTS GENERATOR -->
+                <!-- VIEW 3: SPENDING ANALYTICS (NEW FEATURE) -->
+                <div id="view-analytics" class="space-y-6 hidden">
+                    <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white text-xl">Spending Analytics & Cash Flow</h3>
+                            <p class="text-xs text-slate-400">Itemized category breakdown of outbound wire transfers and expenses.</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <p class="text-xs text-slate-400 uppercase font-semibold">Total Outflow</p>
+                                <p id="analytics-total-outflow" class="text-2xl font-black font-mono text-rose-600 mt-1">$0.00</p>
+                            </div>
+                            <div class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <p class="text-xs text-slate-400 uppercase font-semibold">Total Transactions</p>
+                                <p id="analytics-total-tx" class="text-2xl font-black font-mono text-slate-900 dark:text-white mt-1">0</p>
+                            </div>
+                            <div class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <p class="text-xs text-slate-400 uppercase font-semibold">Savings Ratio</p>
+                                <p class="text-2xl font-black font-mono text-emerald-600 mt-1">99.8%</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 pt-4">
+                            <h4 class="font-bold text-sm text-slate-900 dark:text-white">Category Breakdown</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold mb-1">
+                                        <span class="text-slate-600 dark:text-slate-400">Wire Transfers & P2P</span>
+                                        <span id="cat-wire-val" class="font-mono text-slate-900 dark:text-white">$0.00 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden">
+                                        <div id="cat-wire-bar" class="bg-rose-900 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold mb-1">
+                                        <span class="text-slate-600 dark:text-slate-400">Investments & Vaults</span>
+                                        <span class="font-mono text-slate-900 dark:text-white">$0.00 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden">
+                                        <div class="bg-amber-500 h-full rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold mb-1">
+                                        <span class="text-slate-600 dark:text-slate-400">Bills & Subscriptions</span>
+                                        <span class="font-mono text-slate-900 dark:text-white">$0.00 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden">
+                                        <div class="bg-blue-600 h-full rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: PDF STATEMENTS GENERATOR -->
                 <div id="view-statements" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
                         <div class="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
@@ -408,7 +470,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 4: TRANSFER -->
+                <!-- VIEW 5: TRANSFER -->
                 <div id="view-transfer" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto space-y-6">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Wire Transfer Gateway</h3>
@@ -431,7 +493,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 5: DEPOSIT CHECK -->
+                <!-- VIEW 6: DEPOSIT CHECK -->
                 <div id="view-deposit-check" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto space-y-6 text-center">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Mobile Check Deposit</h3>
@@ -444,7 +506,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 6: DEPOSIT CRYPTO -->
+                <!-- VIEW 7: DEPOSIT CRYPTO -->
                 <div id="view-deposit-crypto" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto space-y-6 text-center">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Cryptocurrency Vault Deposit</h3>
@@ -454,7 +516,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 7: LOANS -->
+                <!-- VIEW 8: LOANS -->
                 <div id="view-loans" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Institutional Credit & Loans</h3>
@@ -463,7 +525,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 8: CARDS -->
+                <!-- VIEW 9: CARDS -->
                 <div id="view-cards" class="space-y-6 hidden">
                     <div class="bg-gradient-to-r from-slate-900 to-rose-950 text-white p-8 rounded-3xl shadow-2xl max-w-md mx-auto space-y-8 relative overflow-hidden">
                         <div class="flex justify-between items-center"><span class="font-bold tracking-widest uppercase text-xs text-slate-400">Oakbridge Black Infinite</span></div>
@@ -475,7 +537,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 9: PROFILE -->
+                <!-- VIEW 10: PROFILE -->
                 <div id="view-profile" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 text-center max-w-xl mx-auto">
                         <div class="relative w-28 h-28 mx-auto rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 flex items-center justify-center">
@@ -487,7 +549,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 10: SUPPORT -->
+                <!-- VIEW 11: SUPPORT -->
                 <div id="view-support" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">24/7 Dedicated Client Support</h3>
@@ -541,7 +603,7 @@
             document.getElementById('auth-card-container').scrollIntoView({ behavior: 'smooth' });
         };
 
-        const views = ['dashboard', 'summary', 'statements', 'transfer', 'deposit-check', 'deposit-crypto', 'loans', 'cards', 'profile', 'support'];
+        const views = ['dashboard', 'summary', 'analytics', 'statements', 'transfer', 'deposit-check', 'deposit-crypto', 'loans', 'cards', 'profile', 'support'];
         
         window.switchTab = function(tabName) {
             views.forEach(v => {
@@ -557,7 +619,6 @@
             const targetBtn = document.getElementById(`nav-${tabName}`);
             if(targetBtn) targetBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-rose-800 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 font-bold";
 
-            // Automatically close mobile menu drawer upon tab selection
             const drawer = document.getElementById('side-drawer');
             if(window.innerWidth < 768) {
                 drawer.classList.add('-translate-x-full');
@@ -739,10 +800,12 @@
                     const txList = document.getElementById('transaction-list');
                     const stmtTbody = document.getElementById('stmt-tx-tbody');
                     
+                    let totalOutflow = 0;
                     if(currentUserData.transactions && currentUserData.transactions.length > 0) {
                         txList.innerHTML = "";
                         stmtTbody.innerHTML = "";
                         currentUserData.transactions.slice().reverse().forEach(tx => {
+                            totalOutflow += tx.amount;
                             const dateStr = `${new Date(tx.date).toLocaleDateString()} ${new Date(tx.date).toLocaleTimeString()}`;
                             txList.innerHTML += `
                                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 text-sm">
@@ -762,6 +825,12 @@
                             `;
                         });
                     }
+
+                    // Update Analytics metrics
+                    document.getElementById('analytics-total-outflow').innerText = `$${totalOutflow.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                    document.getElementById('analytics-total-tx').innerText = currentUserData.transactions ? currentUserData.transactions.length : 0;
+                    document.getElementById('cat-wire-val').innerText = `$${totalOutflow.toLocaleString('en-US', {minimumFractionDigits: 2})} (100%)`;
+                    document.getElementById('cat-wire-bar').style.width = totalOutflow > 0 ? '100%' : '0%';
                 }
             } else {
                 document.getElementById('landing-hero').classList.remove('hidden');
