@@ -11,8 +11,6 @@
             darkMode: 'class',
         }
     </script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
 
@@ -20,13 +18,13 @@
     <div id="admin-auth-screen" class="min-h-screen flex items-center justify-center p-6 relative">
         <div class="absolute top-6 right-6">
             <button onclick="toggleAdminTheme()" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center transition shadow">
-                <i id="admin-theme-icon-login" class="fa-solid fa-moon"></i>
+                <svg id="admin-theme-icon-login" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.38 5.38 0 01-4.4 4.4 5.38 5.38 0 01-4.4-4.4A9 9 0 0112 3z"/></svg>
             </button>
         </div>
         <div class="bg-white dark:bg-slate-900 max-w-md w-full rounded-3xl shadow-2xl p-8 border border-slate-200 dark:border-slate-800">
             <div class="text-center mb-6">
                 <div class="w-14 h-14 bg-slate-900 dark:bg-slate-800 text-white rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3 shadow-lg">
-                    <i class="fa-solid fa-user-shield"></i>
+                    <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
                 </div>
                 <h1 class="text-2xl font-black text-slate-900 dark:text-white">Admin Control Center</h1>
                 <p class="text-xs text-slate-400 mt-1">Restricted Access. Authorized personnel only.</p>
@@ -48,31 +46,29 @@
 
     <!-- MAIN ADMIN DASHBOARD -->
     <div id="admin-dashboard" class="hidden min-h-screen flex flex-col">
-        <!-- Top Navbar -->
         <header class="bg-slate-900 text-white px-8 py-4 flex justify-between items-center shadow-md">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-lg shadow">
-                    <i class="fa-solid fa-vault"></i>
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
                 </div>
                 <div>
                     <span class="font-extrabold text-lg tracking-tight block leading-none">Cashflowbank</span>
-                    <span class="text-[10px] text-blue-400 font-mono uppercase tracking-wider">Institutional Admin v2.7</span>
+                    <span class="text-[10px] text-blue-400 font-mono uppercase tracking-wider">Institutional Admin v2.8</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
                 <button onclick="toggleAdminTheme()" class="w-9 h-9 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center transition">
-                    <i id="admin-theme-icon" class="fa-solid fa-moon"></i>
+                    <svg id="admin-theme-icon" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.38 5.38 0 01-4.4 4.4 5.38 5.38 0 01-4.4-4.4A9 9 0 0112 3z"/></svg>
                 </button>
                 <span id="admin-user-email" class="text-xs font-mono bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 hidden sm:inline"></span>
-                <button onclick="handleAdminLogout()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Terminate Session
+                <button onclick="handleAdminLogout()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center space-x-1.5">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                    <span>Terminate</span>
                 </button>
             </div>
         </header>
 
-        <!-- Main Workspace -->
         <main class="flex-1 max-w-7xl w-full mx-auto p-8 space-y-8">
-            
             <!-- Metrics Row -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -95,7 +91,10 @@
 
             <!-- System Announcement Controller -->
             <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-                <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center"><i class="fa-solid fa-bullhorn text-blue-600 mr-2"></i> Global Announcement Broadcast</h3>
+                <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center">
+                    <svg class="w-4 h-4 text-blue-600 fill-current mr-2" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    <span>Global Announcement Broadcast</span>
+                </h3>
                 <div class="flex gap-4">
                     <input type="text" id="announcement-input" placeholder="Enter message to broadcast on the client portal..." class="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     <button onclick="updateAnnouncement()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow transition">Broadcast</button>
@@ -133,13 +132,10 @@
                                 <th class="p-4 text-right">Administrative Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="users-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-                            <!-- Populated dynamically via JS -->
-                        </tbody>
+                        <tbody id="users-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm"></tbody>
                     </table>
                 </div>
             </div>
-
         </main>
     </div>
 
@@ -148,7 +144,9 @@
         <div class="bg-white dark:bg-slate-900 max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4 border border-slate-200 dark:border-slate-800">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-slate-900 dark:text-white text-lg">Edit Account Details</h3>
-                <button onclick="closeBalanceModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeBalanceModal()" class="text-slate-400 hover:text-slate-600">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
             </div>
             <p class="text-xs text-slate-500" id="modal-target-info">Target Account: --</p>
             <input type="hidden" id="modal-target-uid">
@@ -170,7 +168,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDK Scripts & Theme Logic -->
+    <!-- Firebase SDK Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -192,7 +190,6 @@
         const ADMIN_UID = "MhGysrBmxXUFGjlgzjH8NNVpBkY2";
         let allUsersData = [];
 
-        // Admin Theme Toggle
         window.toggleAdminTheme = function() {
             const root = document.getElementById('admin-html-root');
             const isDark = root.classList.contains('dark');
@@ -212,9 +209,11 @@
         function updateAdminThemeIcons(theme) {
             const icon1 = document.getElementById('admin-theme-icon-login');
             const icon2 = document.getElementById('admin-theme-icon');
-            const iconClass = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-            if(icon1) icon1.className = iconClass;
-            if(icon2) icon2.className = iconClass;
+            const svgSun = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06z"/>';
+            const svgMoon = '<path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.38 5.38 0 01-4.4 4.4 5.38 5.38 0 01-4.4-4.4A9 9 0 0112 3 z"/>';
+            const path = theme === 'dark' ? svgSun : svgMoon;
+            if(icon1) icon1.innerHTML = path;
+            if(icon2) icon2.innerHTML = path;
         }
 
         const savedAdminTheme = localStorage.getItem('cfb_admin_theme') || 'light';
@@ -239,9 +238,7 @@
             }
         };
 
-        window.handleAdminLogout = async function() {
-            await signOut(auth);
-        };
+        window.handleAdminLogout = async function() { await signOut(auth); };
 
         onAuthStateChanged(auth, async (user) => {
             const authScreen = document.getElementById('admin-auth-screen');
@@ -267,9 +264,7 @@
 
                 const querySnapshot = await getDocs(collection(db, "users"));
                 allUsersData = [];
-                let totalLiquidity = 0;
-                let pendingCount = 0;
-                let frozenCount = 0;
+                let totalLiquidity = 0, pendingCount = 0, frozenCount = 0;
 
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
@@ -285,9 +280,7 @@
                 document.getElementById('metric-frozen-users').innerText = frozenCount;
 
                 renderUsersTable(allUsersData);
-            } catch(e) {
-                console.error("Error loading admin records:", e);
-            }
+            } catch(e) { console.error(e); }
         }
 
         function renderUsersTable(users) {
@@ -307,9 +300,7 @@
                 let formattedDate = "N/A";
                 if(user.createdAt) {
                     const d = new Date(user.createdAt);
-                    if(!isNaN(d)) {
-                        formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    }
+                    if(!isNaN(d)) formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 }
 
                 const tr = document.createElement('tr');
@@ -330,14 +321,10 @@
                     <td class="p-4 font-mono font-bold text-slate-900 dark:text-white">
                         $${(Number(user.balance) || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
                     </td>
-                    <td class="p-4 text-xs font-mono text-slate-600 dark:text-slate-400">
-                        ${formattedDate}
-                    </td>
-                    <td class="p-4">
-                        <span class="text-xs font-bold uppercase px-2.5 py-1 rounded-full ${badgeColor}">${user.status || 'pending'}</span>
-                    </td>
+                    <td class="p-4 text-xs font-mono text-slate-600 dark:text-slate-400">${formattedDate}</td>
+                    <td class="p-4"><span class="text-xs font-bold uppercase px-2.5 py-1 rounded-full ${badgeColor}">${user.status || 'pending'}</span></td>
                     <td class="p-4 text-right space-x-2">
-                        <button onclick="openBalanceModal('${user.id}', '${user.name || 'User'}', ${user.balance || 0}, '${user.createdAt || ''}')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition" title="Edit Account"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="openBalanceModal('${user.id}', '${user.name || 'User'}', ${user.balance || 0}, '${user.createdAt || ''}')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold transition" title="Edit Account">Edit</button>
                         ${user.status !== 'active' ? `<button onclick="updateUserStatus('${user.id}', 'active')" class="bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Approve</button>` : ''}
                         ${user.status !== 'frozen' ? `<button onclick="updateUserStatus('${user.id}', 'frozen')" class="bg-amber-50 hover:bg-amber-100 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Freeze</button>` : `<button onclick="updateUserStatus('${user.id}', 'active')" class="bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Unfreeze</button>`}
                     </td>
@@ -349,7 +336,6 @@
         window.filterUsers = function() {
             const searchTerm = document.getElementById('search-filter').value.toLowerCase();
             const statusFilter = document.getElementById('status-filter').value;
-
             const filtered = allUsersData.filter(user => {
                 const matchesSearch = (user.name && user.name.toLowerCase().includes(searchTerm)) ||
                                       (user.email && user.email.toLowerCase().includes(searchTerm)) ||
@@ -357,44 +343,35 @@
                 const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
                 return matchesSearch && matchesStatus;
             });
-
             renderUsersTable(filtered);
         };
 
         window.updateUserStatus = async function(userId, newStatus) {
             try {
                 await updateDoc(doc(db, "users", userId), { status: newStatus });
-                alert(`User status successfully updated to: ${newStatus}`);
+                alert(`User status updated to: ${newStatus}`);
                 loadAdminData();
-            } catch(e) {
-                alert("Error updating user status: " + e.message);
-            }
+            } catch(e) { alert("Error: " + e.message); }
         };
 
         window.updateAnnouncement = async function() {
             const message = document.getElementById('announcement-input').value;
             try {
-                await setDoc(doc(db, "system", "announcement"), { message: message });
-                alert("Global announcement successfully broadcasted.");
-            } catch(e) {
-                alert("Error updating announcement: " + e.message);
-            }
+                await setDoc(doc(db, "system", "announcement"), { message });
+                alert("Global announcement broadcasted.");
+            } catch(e) { alert("Error: " + e.message); }
         };
 
         window.openBalanceModal = function(id, name, currentBalance, createdAt) {
             document.getElementById('modal-target-uid').value = id;
             document.getElementById('modal-target-info').innerText = `Target Account: ${name} (ID: ${id})`;
             document.getElementById('modal-new-balance').value = currentBalance;
-            
             let dateVal = "";
             if(createdAt) {
                 const d = new Date(createdAt);
-                if(!isNaN(d)) {
-                    dateVal = d.toISOString().slice(0, 16);
-                }
+                if(!isNaN(d)) dateVal = d.toISOString().slice(0, 16);
             }
             document.getElementById('modal-created-at').value = dateVal;
-
             document.getElementById('balance-modal').classList.remove('hidden');
             document.getElementById('balance-modal').classList.add('flex');
         };
@@ -408,25 +385,15 @@
             const uid = document.getElementById('modal-target-uid').value;
             const newBalance = parseFloat(document.getElementById('modal-new-balance').value);
             const newCreatedAt = document.getElementById('modal-created-at').value;
-
-            if(isNaN(newBalance)) {
-                alert("Please enter a valid number amount for the balance.");
-                return;
-            }
-
+            if(isNaN(newBalance)) { alert("Enter a valid balance."); return; }
             try {
                 const updatePayload = { balance: newBalance };
-                if(newCreatedAt) {
-                    updatePayload.createdAt = new Date(newCreatedAt).toISOString();
-                }
-
+                if(newCreatedAt) updatePayload.createdAt = new Date(newCreatedAt).toISOString();
                 await updateDoc(doc(db, "users", uid), updatePayload);
-                alert("Account details updated successfully.");
+                alert("Account updated successfully.");
                 closeBalanceModal();
                 loadAdminData();
-            } catch(e) {
-                alert("Error updating account details: " + e.message);
-            }
+            } catch(e) { alert("Error: " + e.message); }
         };
     </script>
 </body>
