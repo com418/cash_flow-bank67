@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <!-- ADMIN DASHBOARD SECTION (Hidden by default) -->
+    <!-- ADMIN DASHBOARD SECTION -->
     <div id="admin-dashboard-section" class="hidden min-h-screen flex flex-col">
         <!-- Top Navbar -->
         <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center shadow-md">
@@ -52,7 +52,7 @@
             </div>
             <div class="flex items-center space-x-4">
                 <div class="text-right hidden sm:block">
-                    <span id="admin-user-display" class="text-sm font-medium text-slate-300 block">admin@cashflowbank.com</span>
+                    <span id="admin-user-display" class="text-sm font-medium text-slate-300 block"></span>
                     <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20">System Administrator</span>
                 </div>
                 <button onclick="handleAdminLogout()" class="bg-slate-700 hover:bg-rose-600/20 hover:text-rose-400 hover:border-rose-500/30 border border-transparent text-slate-300 px-3 py-2 rounded-xl text-xs font-semibold transition">
@@ -95,10 +95,10 @@
                 </div>
             </div>
 
-            <!-- Two Column Layout: User Accounts & Announcements -->
+            <!-- Client Accounts Table & Sidebar -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- User Accounts Table -->
+                <!-- User Accounts Table (Takes 2 cols) -->
                 <div class="lg:col-span-2 bg-slate-800 rounded-2xl border border-slate-700 shadow-sm overflow-hidden flex flex-col">
                     <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
                         <h3 class="font-bold text-white text-base flex items-center">
@@ -110,8 +110,8 @@
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700">
-                                    <th class="py-3 px-6">Client Email / ID</th>
-                                    <th class="py-3 px-6">Balance</th>
+                                    <th class="py-3 px-6">Client Email</th>
+                                    <th class="py-3 px-6">Status / Balance</th>
                                     <th class="py-3 px-6 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -124,7 +124,7 @@
                     </div>
                 </div>
 
-                <!-- Global Announcements Sidebar Panel -->
+                <!-- Announcements Sidebar -->
                 <div class="space-y-6">
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm">
                         <h3 class="font-bold text-white text-base mb-4 flex items-center">
@@ -133,20 +133,12 @@
                         <form onsubmit="handleBroadcastAnnouncement(event)" class="space-y-4">
                             <div>
                                 <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Broadcast Banner Message</label>
-                                <textarea id="announcement-text" rows="3" placeholder="e.g. Scheduled system maintenance on Sunday..." required class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                                <textarea id="announcement-text" rows="3" placeholder="e.g. Scheduled system maintenance..." required class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
                             </div>
                             <button type="submit" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-xl text-xs font-bold border border-slate-600 transition">
-                                Push Announcement to All Users
+                                Push Announcement
                             </button>
                         </form>
-                    </div>
-
-                    <!-- System Status Card -->
-                    <div class="bg-gradient-to-br from-amber-500/10 to-slate-800 p-6 rounded-2xl border border-amber-500/20 shadow-sm">
-                        <h4 class="font-bold text-amber-400 text-sm mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Security Protocol</h4>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Authorized strictly for UID: <code class="text-amber-300 bg-slate-900 px-1 py-0.5 rounded">MhGysrBmxXUFGjlgzjH8NNVpBkY2</code>. All balance modifications are logged securely.
-                        </p>
                     </div>
                 </div>
 
@@ -158,9 +150,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Your Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCBR4EQx9UXqGFgHKKKcH_11VWhumpQ4KA",
             authDomain: "cashflowbank-e7144.firebaseapp.com",
@@ -170,15 +161,11 @@
             appId: "1:424318838821:web:308d3ac75c87eb99b637cc"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        // Designated Admin UID constraint
         const ADMIN_UID = "MhGysrBmxXUFGjlgzjH8NNVpBkY2";
 
-        // Admin Login Handler
         window.handleAdminLogin = async function(e) {
             e.preventDefault();
             const email = document.getElementById('admin-email').value;
@@ -193,12 +180,10 @@
             }
         };
 
-        // Admin Logout Handler
         window.handleAdminLogout = async function() {
             await signOut(auth);
         };
 
-        // Auth State Observer with strict UID check
         onAuthStateChanged(auth, async (user) => {
             const authSection = document.getElementById('admin-auth-section');
             const dashboardSection = document.getElementById('admin-dashboard-section');
@@ -211,7 +196,7 @@
                     adminUserDisplay.innerText = user.email;
                     loadAdminData();
                 } else {
-                    alert("Access Denied: This account is not authorized as system administrator.");
+                    alert("Access Denied: Authorized administrators only.");
                     await signOut(auth);
                 }
             } else {
@@ -220,7 +205,6 @@
             }
         });
 
-        // Load Admin System Stats and Users from Firestore
         async function loadAdminData() {
             try {
                 const usersSnapshot = await getDocs(collection(db, "users"));
@@ -228,13 +212,14 @@
                 usersTable.innerHTML = '';
 
                 let totalUsersCount = 0;
+                let pendingCount = 0;
                 let totalLiquidity = 0;
 
                 if(usersSnapshot.empty) {
-                    usersTable.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-slate-500">No client accounts found in Firestore yet.</td></tr>`;
+                    usersTable.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-slate-500">No client accounts found.</td></tr>`;
                     document.getElementById('stat-total-users').innerText = '0';
-                    document.getElementById('stat-total-liquidity').innerText = '$0.00';
                     document.getElementById('stat-pending-approvals').innerText = '0';
+                    document.getElementById('stat-total-liquidity').innerText = '$0.00';
                     return;
                 }
 
@@ -242,66 +227,93 @@
                     totalUsersCount++;
                     const data = userDoc.data();
                     const balance = data.balance || 0;
-                    totalLiquidity += balance;
+                    const status = data.status || 'pending';
+                    
+                    if(status === 'pending') pendingCount++;
+                    if(status === 'approved') totalLiquidity += balance;
+
+                    let statusBadge = '';
+                    if(status === 'pending') statusBadge = '<span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded text-[10px] font-bold">Pending Approval</span>';
+                    else if(status === 'frozen') statusBadge = '<span class="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded text-[10px] font-bold">Frozen</span>';
+                    else statusBadge = '<span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded text-[10px] font-bold">Active</span>';
 
                     const row = document.createElement('tr');
                     row.className = "hover:bg-slate-700/30 transition";
                     row.innerHTML = `
-                        <td class="py-3 px-6 font-medium text-white">${data.email || userDoc.id}</td>
-                        <td class="py-3 px-6 font-semibold text-emerald-400">$${balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                        <td class="py-3 px-6 text-right space-x-2">
-                            <button onclick="adjustUserBalance('${userDoc.id}', ${balance})" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
-                                Adjust Balance
-                            </button>
+                        <td class="py-3 px-6 font-medium text-white">
+                            ${data.email || userDoc.id}
+                            <div class="mt-1">${statusBadge}</div>
+                        </td>
+                        <td class="py-3 px-6 font-semibold text-slate-300">
+                            $${balance.toLocaleString('en-US', {minimumFractionDigits: 2})}
+                        </td>
+                        <td class="py-3 px-6 text-right space-x-1">
+                            ${status === 'pending' ? `<button onclick="updateUserStatus('${userDoc.id}', 'approved')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Approve</button>` : ''}
+                            ${status !== 'frozen' ? `<button onclick="updateUserStatus('${userDoc.id}', 'frozen')" class="bg-amber-600 hover:bg-amber-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Freeze</button>` : `<button onclick="updateUserStatus('${userDoc.id}', 'approved')" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Unfreeze</button>`}
+                            <button onclick="adjustUserBalance('${userDoc.id}', ${balance})" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Edit Balance</button>
+                            <button onclick="deleteUserAccount('${userDoc.id}')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Delete</button>
                         </td>
                     `;
                     usersTable.appendChild(row);
                 });
 
                 document.getElementById('stat-total-users').innerText = totalUsersCount;
+                document.getElementById('stat-pending-approvals').innerText = pendingCount;
                 document.getElementById('stat-total-liquidity').innerText = `$${totalLiquidity.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-                document.getElementById('stat-pending-approvals').innerText = '0';
 
             } catch (err) {
                 console.error("Error loading admin records:", err);
             }
         }
 
-        // Adjust User Balance Function
-        window.adjustUserBalance = async function(userId, currentBalance) {
-            const newAmountStr = prompt(`Enter new balance for client account (Current: $${currentBalance}):`, currentBalance);
-            if(newAmountStr === null) return;
-
-            const newBalance = parseFloat(newAmountStr);
-            if(isNaN(newBalance)) {
-                alert("Please enter a valid numeric value.");
-                return;
-            }
-
+        window.updateUserStatus = async function(userId, newStatus) {
             try {
-                const userRef = doc(db, "users", userId);
-                await updateDoc(userRef, { balance: newBalance });
-                alert("Client balance successfully updated!");
+                await updateDoc(doc(db, "users", userId), { status: newStatus });
+                alert(`Account status updated to: ${newStatus}`);
                 loadAdminData();
             } catch(err) {
-                alert("Failed to update balance: " + err.message);
+                alert("Failed to update status: " + err.message);
             }
         };
 
-        // Broadcast Announcement Function
+        window.adjustUserBalance = async function(userId, currentBalance) {
+            const newAmountStr = prompt(`Enter new balance (Current: $${currentBalance}):`, currentBalance);
+            if(newAmountStr === null) return;
+            const newBalance = parseFloat(newAmountStr);
+            if(isNaN(newBalance)) return alert("Invalid amount.");
+
+            try {
+                await updateDoc(doc(db, "users", userId), { balance: newBalance });
+                alert("Balance updated successfully!");
+                loadAdminData();
+            } catch(err) {
+                alert("Error: " + err.message);
+            }
+        };
+
+        window.deleteUserAccount = async function(userId) {
+            if(!confirm("Are you sure you want to delete this client account record?")) return;
+            try {
+                await deleteDoc(doc(db, "users", userId));
+                alert("Account record deleted successfully.");
+                loadAdminData();
+            } catch(err) {
+                alert("Error deleting account: " + err.message);
+            }
+        };
+
         window.handleBroadcastAnnouncement = async function(e) {
             e.preventDefault();
             const text = document.getElementById('announcement-text').value;
-
             try {
                 await setDoc(doc(db, "system", "announcement"), {
                     message: text,
                     timestamp: new Date().toISOString()
                 });
-                alert("Global announcement broadcasted successfully to all user client portals!");
+                alert("Global announcement broadcasted!");
                 document.getElementById('announcement-text').value = '';
             } catch(err) {
-                alert("Error broadcasting announcement: " + err.message);
+                alert("Error: " + err.message);
             }
         };
     </script>
