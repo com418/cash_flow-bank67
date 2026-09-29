@@ -3,154 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cashflowbank - Secure Admin Portal</title>
+    <title>Cashflowbank - Institutional Admin Console</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans antialiased">
+<body class="bg-slate-100 text-slate-800 font-sans antialiased">
 
-    <!-- ADMIN LOGIN SECTION -->
-    <div id="admin-auth-section" class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-slate-800 max-w-md w-full rounded-2xl shadow-2xl p-8 border border-slate-700">
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-amber-500 text-slate-950 rounded-2xl text-2xl font-bold shadow-lg shadow-amber-500/20 mb-3">
-                    <i class="fa-solid fa-shield-halved"></i>
+    <!-- ADMIN LOGIN GATE (Visible when not logged in as Admin) -->
+    <div id="admin-auth-screen" class="min-h-screen flex items-center justify-center p-6">
+        <div class="bg-white max-w-md w-full rounded-3xl shadow-2xl p-8 border border-slate-200">
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3 shadow-lg">
+                    <i class="fa-solid fa-user-shield"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-white">Cashflowbank Admin</h1>
-                <p class="text-sm text-slate-400">Restricted access for authorized personnel only</p>
+                <h1 class="text-2xl font-black text-slate-900">Admin Control Center</h1>
+                <p class="text-xs text-slate-400 mt-1">Restricted Access. Authorized personnel only.</p>
             </div>
-
-            <form id="admin-login-form" onsubmit="handleAdminLogin(event)" class="space-y-4">
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Admin Email</label>
-                    <input type="email" id="admin-email" required placeholder="admin@cashflowbank.com" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm text-white">
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Admin Email</label>
+                    <input type="email" id="admin-email" required placeholder="admin@cashflowbank.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:outline-none text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Secure Password</label>
-                    <input type="password" id="admin-password" required class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm text-white">
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
+                    <input type="password" id="admin-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:outline-none text-sm">
                 </div>
-                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3 rounded-xl font-bold text-sm shadow-lg shadow-amber-500/20 transition">Authenticate Admin</button>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl font-semibold text-sm shadow-lg transition">Authorize Session</button>
             </form>
-            <p id="admin-auth-error" class="text-rose-400 text-xs mt-4 text-center hidden"></p>
+            <p id="admin-login-error" class="text-rose-500 text-xs mt-4 text-center hidden"></p>
         </div>
     </div>
 
-    <!-- ADMIN DASHBOARD SECTION -->
-    <div id="admin-dashboard-section" class="hidden min-h-screen flex flex-col">
+    <!-- MAIN ADMIN DASHBOARD (Hidden until authenticated) -->
+    <div id="admin-dashboard" class="hidden min-h-screen flex flex-col">
         <!-- Top Navbar -->
-        <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center shadow-md">
+        <header class="bg-slate-900 text-white px-8 py-4 flex justify-between items-center shadow-md">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-amber-500 text-slate-950 rounded-xl flex items-center justify-center font-bold text-lg shadow-md">
-                    <i class="fa-solid fa-shield-halved"></i>
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-lg shadow">
+                    <i class="fa-solid fa-vault"></i>
                 </div>
                 <div>
-                    <span class="font-bold text-lg text-white block leading-none">Cashflowbank</span>
-                    <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider">Control Center</span>
+                    <span class="font-extrabold text-lg tracking-tight block leading-none">Cashflowbank</span>
+                    <span class="text-[10px] text-blue-400 font-mono uppercase tracking-wider">Institutional Admin v2.4</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <div class="text-right hidden sm:block">
-                    <span id="admin-user-display" class="text-sm font-medium text-slate-300 block"></span>
-                    <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20">System Administrator</span>
-                </div>
-                <button onclick="handleAdminLogout()" class="bg-slate-700 hover:bg-rose-600/20 hover:text-rose-400 hover:border-rose-500/30 border border-transparent text-slate-300 px-3 py-2 rounded-xl text-xs font-semibold transition">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+                <span id="admin-user-email" class="text-xs font-mono bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 hidden sm:inline"></span>
+                <button onclick="handleAdminLogout()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Terminate Session
                 </button>
             </div>
         </header>
 
-        <!-- Main Content Grid -->
-        <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+        <!-- Main Workspace -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-8 space-y-8">
             
-            <!-- Quick Metrics Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm flex items-center space-x-4">
-                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xl font-bold border border-blue-500/20">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total System Users</p>
-                        <h3 class="text-2xl font-black text-white" id="stat-total-users">--</h3>
-                    </div>
+            <!-- Metrics Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Total System Liquidity</p>
+                    <h3 class="text-3xl font-black text-slate-900" id="metric-total-liquidity">$0.00</h3>
                 </div>
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm flex items-center space-x-4">
-                    <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-xl font-bold border border-amber-500/20">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pending Approvals</p>
-                        <h3 class="text-2xl font-black text-white" id="stat-pending-approvals">--</h3>
-                    </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Total Registered Accounts</p>
+                    <h3 class="text-3xl font-black text-blue-600" id="metric-total-users">0</h3>
                 </div>
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm flex items-center space-x-4">
-                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl font-bold border border-emerald-500/20">
-                        <i class="fa-solid fa-vault"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Bank Liquidity</p>
-                        <h3 class="text-2xl font-black text-white" id="stat-total-liquidity">$0.00</h3>
-                    </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Pending Approvals</p>
+                    <h3 class="text-3xl font-black text-amber-500" id="metric-pending-users">0</h3>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Frozen Accounts</p>
+                    <h3 class="text-3xl font-black text-rose-500" id="metric-frozen-users">0</h3>
                 </div>
             </div>
 
-            <!-- Client Accounts Table & Sidebar -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- User Accounts Table (Takes 2 cols) -->
-                <div class="lg:col-span-2 bg-slate-800 rounded-2xl border border-slate-700 shadow-sm overflow-hidden flex flex-col">
-                    <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
-                        <h3 class="font-bold text-white text-base flex items-center">
-                            <i class="fa-solid fa-address-book text-amber-400 mr-2"></i> Client Account Management
-                        </h3>
-                        <span class="text-xs text-slate-400">Live Database Synced</span>
-                    </div>
-                    <div class="overflow-x-auto flex-1">
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700">
-                                    <th class="py-3 px-6">Client Info / Account</th>
-                                    <th class="py-3 px-6">Balance & Date</th>
-                                    <th class="py-3 px-6 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-users-table" class="divide-y divide-slate-700 text-slate-200">
-                                <tr>
-                                    <td colspan="3" class="py-6 text-center text-slate-500">Loading user accounts...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <!-- System Announcement Controller -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="font-bold text-slate-900 text-base flex items-center"><i class="fa-solid fa-bullhorn text-blue-600 mr-2"></i> Global Announcement Broadcast</h3>
+                <div class="flex gap-4">
+                    <input type="text" id="announcement-input" placeholder="Enter message to broadcast on the client portal..." class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <button onclick="updateAnnouncement()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow transition">Broadcast</button>
                 </div>
-
-                <!-- Announcements Sidebar -->
-                <div class="space-y-6">
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm">
-                        <h3 class="font-bold text-white text-base mb-4 flex items-center">
-                            <i class="fa-solid fa-bullhorn text-amber-400 mr-2"></i> Global Announcement
-                        </h3>
-                        <form onsubmit="handleBroadcastAnnouncement(event)" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Broadcast Banner Message</label>
-                                <textarea id="announcement-text" rows="3" placeholder="e.g. Scheduled system maintenance..." required class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
-                            </div>
-                            <button type="submit" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-xl text-xs font-bold border border-slate-600 transition">
-                                Push Announcement
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
             </div>
+
+            <!-- Client Management Table Section -->
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-lg">Client Directory & Accounts</h3>
+                        <p class="text-xs text-slate-400">Manage statuses, inspect credentials, and adjust asset balances.</p>
+                    </div>
+                    <div class="flex items-center space-x-3 w-full md:w-auto">
+                        <input type="text" id="search-filter" onkeyup="filterUsers()" placeholder="Search name, email, or account #" class="px-4 py-2 rounded-xl border border-slate-200 text-sm w-full md:w-64 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <select id="status-filter" onchange="filterUsers()" class="px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="active">Active</option>
+                            <option value="frozen">Frozen</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 text-[11px] uppercase tracking-wider font-semibold">
+                                <th class="p-4">Account Number / Name</th>
+                                <th class="p-4">Email / Country</th>
+                                <th class="p-4">Type / PIN</th>
+                                <th class="p-4">Balance</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 text-right">Administrative Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body" class="divide-y divide-slate-100 text-sm">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </main>
+    </div>
+
+    <!-- ADJUST BALANCE MODAL -->
+    <div id="balance-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 text-lg">Adjust Account Balance</h3>
+                <button onclick="closeBalanceModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-500" id="modal-target-info">Target Account: --</p>
+            <input type="hidden" id="modal-target-uid">
+            <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">New Balance Amount ($)</label>
+                <input type="number" step="0.01" id="modal-new-balance" required class="w-full px-4 py-3 rounded-xl border border-slate-200 font-mono text-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div class="flex space-x-3 pt-2">
+                <button onclick="closeBalanceModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-semibold text-sm transition">Cancel</button>
+                <button onclick="saveNewBalance()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow transition">Commit Changes</button>
+            </div>
+        </div>
     </div>
 
     <!-- Firebase SDK Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, getDocs, updateDbDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCBR4EQx9UXqGFgHKKKcH_11VWhumpQ4KA",
@@ -164,18 +167,24 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
         const ADMIN_UID = "MhGysrBmxXUFGjlgzjH8NNVpBkY2";
+        let allUsersData = [];
 
         window.handleAdminLogin = async function(e) {
             e.preventDefault();
             const email = document.getElementById('admin-email').value;
             const password = document.getElementById('admin-password').value;
-            const errorBox = document.getElementById('admin-auth-error');
+            const errorBox = document.getElementById('admin-login-error');
 
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                errorBox.innerText = error.message;
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                if (userCred.user.uid !== ADMIN_UID) {
+                    await signOut(auth);
+                    throw new Error("Access Denied. Account does not have administrator privileges.");
+                }
+            } catch(err) {
+                errorBox.innerText = err.message;
                 errorBox.classList.remove('hidden');
             }
         };
@@ -185,160 +194,163 @@
         };
 
         onAuthStateChanged(auth, async (user) => {
-            const authSection = document.getElementById('admin-auth-section');
-            const dashboardSection = document.getElementById('admin-dashboard-section');
-            const adminUserDisplay = document.getElementById('admin-user-display');
+            const authScreen = document.getElementById('admin-auth-screen');
+            const dashboard = document.getElementById('admin-dashboard');
 
-            if (user) {
-                if (user.uid === ADMIN_UID) {
-                    authSection.classList.add('hidden');
-                    dashboardSection.classList.remove('hidden');
-                    adminUserDisplay.innerText = user.email;
-                    loadAdminData();
-                } else {
-                    alert("Access Denied: Authorized administrators only.");
-                    await signOut(auth);
-                }
+            if (user && user.uid === ADMIN_UID) {
+                authScreen.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                document.getElementById('admin-user-email').innerText = user.email;
+                loadAdminData();
             } else {
-                authSection.classList.remove('hidden');
-                dashboardSection.classList.add('hidden');
+                authScreen.classList.remove('hidden');
+                dashboard.classList.add('hidden');
             }
         });
 
         async function loadAdminData() {
             try {
-                const usersSnapshot = await getDocs(collection(db, "users"));
-                const usersTable = document.getElementById('admin-users-table');
-                usersTable.innerHTML = '';
-
-                let totalUsersCount = 0;
-                let pendingCount = 0;
-                let totalLiquidity = 0;
-
-                if(usersSnapshot.empty) {
-                    usersTable.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-slate-500">No client accounts found.</td></tr>`;
-                    document.getElementById('stat-total-users').innerText = '0';
-                    document.getElementById('stat-pending-approvals').innerText = '0';
-                    document.getElementById('stat-total-liquidity').innerText = '$0.00';
-                    return;
+                // Load existing announcement
+                const annDoc = await getDoc(doc(db, "system", "announcement"));
+                if(annDoc.exists()) {
+                    document.getElementById('announcement-input').value = annDoc.data().message || "";
                 }
 
-                usersSnapshot.forEach((userDoc) => {
-                    totalUsersCount++;
-                    const data = userDoc.data();
-                    const balance = data.balance || 0;
-                    const status = data.status || 'pending';
-                    const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'N/A';
-                    
-                    if(status === 'pending') pendingCount++;
-                    if(status === 'approved') totalLiquidity += balance;
+                // Load Users
+                const querySnapshot = await getDocs(collection(db, "users"));
+                allUsersData = [];
+                let totalLiquidity = 0;
+                let pendingCount = 0;
+                let frozenCount = 0;
 
-                    let statusBadge = '';
-                    if(status === 'pending') statusBadge = '<span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded text-[10px] font-bold">Pending</span>';
-                    else if(status === 'frozen') statusBadge = '<span class="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded text-[10px] font-bold">Frozen</span>';
-                    else statusBadge = '<span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded text-[10px] font-bold">Active</span>';
-
-                    const row = document.createElement('tr');
-                    row.className = "hover:bg-slate-700/30 transition";
-                    row.innerHTML = `
-                        <td class="py-3 px-6 font-medium text-white">
-                            <div>${data.email || userDoc.id}</div>
-                            <div class="text-xs text-slate-400 font-mono mt-0.5">Acc: ${data.accountNumber || 'N/A'}</div>
-                            <div class="mt-1">${statusBadge}</div>
-                        </td>
-                        <td class="py-3 px-6">
-                            <div class="font-semibold text-emerald-400">$${balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
-                            <div class="text-xs text-slate-400 mt-1">Created: ${createdAt}</div>
-                        </td>
-                        <td class="py-3 px-6 text-right space-x-1 space-y-1">
-                            ${status === 'pending' ? `<button onclick="updateUserStatus('${userDoc.id}', 'approved')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Approve</button>` : ''}
-                            ${status !== 'frozen' ? `<button onclick="updateUserStatus('${userDoc.id}', 'frozen')" class="bg-amber-600 hover:bg-amber-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Freeze</button>` : `<button onclick="updateUserStatus('${userDoc.id}', 'approved')" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Unfreeze</button>`}
-                            <button onclick="adjustUserBalance('${userDoc.id}', ${balance})" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Balance</button>
-                            <button onclick="changeAccountDate('${userDoc.id}', '${data.createdAt || ''}')" class="bg-slate-700 hover:bg-slate-600 text-blue-300 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Change Date</button>
-                            <button onclick="deleteUserAccount('${userDoc.id}')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 px-2.5 py-1 rounded-lg text-xs font-semibold transition">Delete</button>
-                        </td>
-                    `;
-                    usersTable.appendChild(row);
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    allUsersData.push({ id: docSnap.id, ...data });
+                    totalLiquidity += (Number(data.balance) || 0);
+                    if(data.status === "pending") pendingCount++;
+                    if(data.status === "frozen") frozenCount++;
                 });
 
-                document.getElementById('stat-total-users').innerText = totalUsersCount;
-                document.getElementById('stat-pending-approvals').innerText = pendingCount;
-                document.getElementById('stat-total-liquidity').innerText = `$${totalLiquidity.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                document.getElementById('metric-total-liquidity').innerText = `$${totalLiquidity.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                document.getElementById('metric-total-users').innerText = allUsersData.length;
+                document.getElementById('metric-pending-users').innerText = pendingCount;
+                document.getElementById('metric-frozen-users').innerText = frozenCount;
 
-            } catch (err) {
-                console.error("Error loading admin records:", err);
+                renderUsersTable(allUsersData);
+            } catch(e) {
+                console.error("Error loading admin records:", e);
             }
         }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = "";
+
+            if(users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">No client records found.</td></tr>`;
+                return;
+            }
+
+            users.forEach(user => {
+                let badgeColor = "bg-amber-50 text-amber-600";
+                if(user.status === "active") badgeColor = "bg-emerald-50 text-emerald-600";
+                if(user.status === "frozen") badgeColor = "bg-rose-50 text-rose-600";
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition";
+                tr.innerHTML = `
+                    <td class="p-4">
+                        <span class="font-bold text-slate-900 block">${user.name || 'Unnamed'}</span>
+                        <span class="text-xs font-mono text-blue-600">Acc: ${user.accountNumber || 'N/A'}</span>
+                    </td>
+                    <td class="p-4">
+                        <span class="text-slate-700 block">${user.email}</span>
+                        <span class="text-xs text-slate-400">${user.country || 'N/A'}</span>
+                    </td>
+                    <td class="p-4">
+                        <span class="font-semibold text-slate-800">${user.accountType || 'Checking'}</span>
+                        <span class="text-xs font-mono text-slate-400 block">PIN: ${user.pin || '----'}</span>
+                    </td>
+                    <td class="p-4 font-mono font-bold text-slate-900">
+                        $${(Number(user.balance) || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
+                    </td>
+                    <td class="p-4">
+                        <span class="text-xs font-bold uppercase px-2.5 py-1 rounded-full ${badgeColor}">${user.status || 'pending'}</span>
+                    </td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="openBalanceModal('${user.id}', '${user.name}', ${user.balance || 0})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition" title="Edit Balance"><i class="fa-solid fa-wallet"></i></button>
+                        ${user.status !== 'active' ? `<button onclick="updateUserStatus('${user.id}', 'active')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Approve</button>` : ''}
+                        ${user.status !== 'frozen' ? `<button onclick="updateUserStatus('${user.id}', 'frozen')" class="bg-amber-50 hover:bg-amber-100 text-amber-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Freeze</button>` : `<button onclick="updateUserStatus('${user.id}', 'active')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Unfreeze</button>`}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.filterUsers = function() {
+            const searchTerm = document.getElementById('search-filter').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+
+            const filtered = allUsersData.filter(user => {
+                const matchesSearch = (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+                                      (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                                      (user.accountNumber && user.accountNumber.includes(searchTerm));
+                const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            renderUsersTable(filtered);
+        };
 
         window.updateUserStatus = async function(userId, newStatus) {
             try {
                 await updateDoc(doc(db, "users", userId), { status: newStatus });
-                alert(`Account status updated to: ${newStatus}`);
+                alert(`User status successfully updated to: ${newStatus}`);
                 loadAdminData();
-            } catch(err) {
-                alert("Failed to update status: " + err.message);
+            } catch(e) {
+                alert("Error updating user status: " + e.message);
             }
         };
 
-        window.adjustUserBalance = async function(userId, currentBalance) {
-            const newAmountStr = prompt(`Enter new balance (Current: $${currentBalance}):`, currentBalance);
-            if(newAmountStr === null) return;
-            const newBalance = parseFloat(newAmountStr);
-            if(isNaN(newBalance)) return alert("Invalid amount.");
-
+        window.updateAnnouncement = async function() {
+            const message = document.getElementById('announcement-input').value;
             try {
-                await updateDoc(doc(db, "users", userId), { balance: newBalance });
-                alert("Balance updated successfully!");
-                loadAdminData();
-            } catch(err) {
-                alert("Error: " + err.message);
+                await setDoc(doc(db, "system", "announcement"), { message: message });
+                alert("Global announcement successfully broadcasted.");
+            } catch(e) {
+                alert("Error updating announcement: " + e.message);
             }
         };
 
-        window.changeAccountDate = async function(userId, currentDateStr) {
-            const currentFormatted = currentDateStr ? currentDateStr.split('T')[0] : new Date().toISOString().split('T')[0];
-            const newDateInput = prompt("Enter new creation date (Format: YYYY-MM-DD):", currentFormatted);
-            if(!newDateInput) return;
+        window.openBalanceModal = function(id, name, currentBalance) {
+            document.getElementById('modal-target-uid').value = id;
+            document.getElementById('modal-target-info').innerText = `Target Account: ${name} (ID: ${id})`;
+            document.getElementById('modal-new-balance').value = currentBalance;
+            document.getElementById('balance-modal').classList.remove('hidden');
+            document.getElementById('balance-modal').classList.add('flex');
+        };
 
-            // Validate date format or parse it safely into ISO format
-            const parsedDate = new Date(newDateInput);
-            if(isNaN(parsedDate.getTime())) {
-                alert("Invalid date format. Please use YYYY-MM-DD.");
+        window.closeBalanceModal = function() {
+            document.getElementById('balance-modal').classList.add('hidden');
+            document.getElementById('balance-modal').classList.remove('flex');
+        };
+
+        window.saveNewBalance = async function() {
+            const uid = document.getElementById('modal-target-uid').value;
+            const newBalance = parseFloat(document.getElementById('modal-new-balance').value);
+
+            if(isNaN(newBalance)) {
+                alert("Please enter a valid number amount.");
                 return;
             }
 
             try {
-                await updateDoc(doc(db, "users", userId), { createdAt: parsedDate.toISOString() });
-                alert("Account creation date successfully updated!");
+                await updateDoc(doc(db, "users", uid), { balance: newBalance });
+                alert("Account balance adjusted successfully.");
+                closeBalanceModal();
                 loadAdminData();
-            } catch(err) {
-                alert("Error updating date: " + err.message);
-            }
-        };
-
-        window.deleteUserAccount = async function(userId) {
-            if(!confirm("Are you sure you want to delete this client account record?")) return;
-            try {
-                await deleteDoc(doc(db, "users", userId));
-                alert("Account record deleted successfully.");
-                loadAdminData();
-            } catch(err) {
-                alert("Error deleting account: " + err.message);
-            }
-        };
-
-        window.handleBroadcastAnnouncement = async function(e) {
-            e.preventDefault();
-            const text = document.getElementById('announcement-text').value;
-            try {
-                await setDoc(doc(db, "system", "announcement"), {
-                    message: text,
-                    timestamp: new Date().toISOString()
-                });
-                alert("Global announcement broadcasted!");
-                document.getElementById('announcement-text').value = '';
-            } catch(err) {
-                alert("Error: " + err.message);
+            } catch(e) {
+                alert("Error updating balance: " + e.message);
             }
         };
     </script>
