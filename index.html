@@ -80,21 +80,41 @@
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition">Access Dashboard</button>
                 </form>
 
-                <!-- Register Form -->
-                <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                <!-- Expanded Register Form -->
+                <form id="register-form" onsubmit="handleRegister(event)" class="space-y-3 hidden">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Full Legal Name</label>
-                        <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Full Name</label>
+                        <input type="text" id="reg-name" required placeholder="John Doe" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Email Address</label>
-                        <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                        <input type="email" id="reg-email" required placeholder="john@example.com" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Secure Password</label>
-                        <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Account Type</label>
+                            <select id="reg-account-type" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-white">
+                                <option value="Checking">Checking</option>
+                                <option value="Savings">Savings</option>
+                                <option value="Business">Business</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Country</label>
+                            <input type="text" id="reg-country" required placeholder="United States" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                        </div>
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition">Submit Application</button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
+                            <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">4-Digit PIN</label>
+                            <input type="password" id="reg-pin" maxlength="4" required placeholder="1234" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition mt-2">Submit Application</button>
                 </form>
                 <p id="auth-error" class="text-rose-500 text-xs mt-4 text-center hidden"></p>
             </div>
@@ -174,12 +194,16 @@
                             <span class="text-emerald-600 font-bold uppercase text-xs bg-emerald-50 px-2 py-0.5 rounded">Active</span>
                         </div>
                         <div class="flex justify-between pb-2 border-b border-slate-100">
-                            <span class="text-slate-500">Routing Number</span>
-                            <span class="font-mono font-semibold text-slate-800">021000021</span>
+                            <span class="text-slate-500">Account Type</span>
+                            <span id="summary-account-type" class="font-semibold text-slate-800">Checking</span>
+                        </div>
+                        <div class="flex justify-between pb-2 border-b border-slate-100">
+                            <span class="text-slate-500">Country</span>
+                            <span id="summary-country" class="font-semibold text-slate-800">USA</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-slate-500">Account Type</span>
-                            <span class="font-semibold text-slate-800">Checking / Reserve</span>
+                            <span class="text-slate-500">Routing Number</span>
+                            <span class="font-mono font-semibold text-slate-800">021000021</span>
                         </div>
                     </div>
                 </div>
@@ -206,7 +230,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Fetch and display global announcements
         async function loadAnnouncement() {
             try {
                 const annDoc = await getDoc(doc(db, "system", "announcement"));
@@ -219,7 +242,6 @@
         }
         loadAnnouncement();
 
-        // UI Tabs & Smooth Scroll
         window.switchTab = function(tab) {
             const loginForm = document.getElementById('login-form');
             const regForm = document.getElementById('register-form');
@@ -250,29 +272,34 @@
             document.getElementById('auth-card-container').scrollIntoView({ behavior: 'smooth' });
         };
 
-        // Register Action: Generates 10-Digit Account Number
+        // Register Action with expanded fields
         window.handleRegister = async function(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
+            const accountType = document.getElementById('reg-account-type').value;
+            const country = document.getElementById('reg-country').value;
             const password = document.getElementById('reg-password').value;
+            const pin = document.getElementById('reg-pin').value;
             const errorBox = document.getElementById('auth-error');
 
             try {
                 const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                // Generate unique 10-digit account number starting with '10'
                 const accountNumber = '10' + Math.floor(10000000 + Math.random() * 90000000);
 
                 await setDoc(doc(db, "users", userCred.user.uid), {
                     name: name,
                     email: email,
+                    accountType: accountType,
+                    country: country,
+                    pin: pin,
                     accountNumber: accountNumber,
                     balance: 0.00,
                     status: "pending",
                     createdAt: new Date().toISOString()
                 });
 
-                alert(`Application submitted successfully! Your assigned Account Number is: ${accountNumber}. Please wait for admin approval to sign in.`);
+                alert(`Application submitted successfully! Your assigned Account Number is: ${accountNumber}. Please wait for admin approval.`);
                 switchTab('login');
             } catch (error) {
                 errorBox.innerText = error.message;
@@ -280,7 +307,6 @@
             }
         };
 
-        // Login Action: Lookup email by 10-Digit Account Number
         window.handleLogin = async function(e) {
             e.preventDefault();
             const accountNumber = document.getElementById('login-account-number').value.trim();
@@ -288,7 +314,6 @@
             const errorBox = document.getElementById('auth-error');
 
             try {
-                // Query Firestore to find user email associated with this account number
                 const q = query(collection(db, "users"), where("accountNumber", "==", accountNumber));
                 const querySnapshot = await getDocs(q);
 
@@ -312,13 +337,14 @@
             await signOut(auth);
         };
 
-        // Auth State & Status Validation
         onAuthStateChanged(auth, async (user) => {
             const heroSection = document.getElementById('landing-hero');
             const dashboardSection = document.getElementById('dashboard-section');
             const userDisplayEmail = document.getElementById('user-display-email');
             const navAccNumber = document.getElementById('nav-account-number');
             const accountBalance = document.getElementById('account-balance');
+            const summaryAccountType = document.getElementById('summary-account-type');
+            const summaryCountry = document.getElementById('summary-country');
 
             if (user) {
                 try {
@@ -339,9 +365,11 @@
 
                         heroSection.classList.add('hidden');
                         dashboardSection.classList.remove('hidden');
-                        userDisplayEmail.innerText = data.email;
+                        userDisplayEmail.innerText = data.name || data.email;
                         navAccNumber.innerText = `Acc: ${data.accountNumber || 'N/A'}`;
                         accountBalance.innerText = `$${(data.balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                        if(summaryAccountType) summaryAccountType.innerText = data.accountType || 'Checking';
+                        if(summaryCountry) summaryCountry.innerText = data.country || 'N/A';
                     }
                 } catch(err) {
                     console.error("Error verifying user status:", err);
