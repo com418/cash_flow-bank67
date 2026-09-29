@@ -116,7 +116,7 @@
                         <button onclick="switchTab('register')" id="tab-register" class="flex-1 pb-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent transition">Register</button>
                     </div>
 
-                    <!-- Login Form (Account Number & Password) -->
+                    <!-- Login Form -->
                     <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                         <div>
                             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">10-Digit Account Number</label>
@@ -233,8 +233,9 @@
         <!-- Top Navbar -->
         <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow">
-                    <i class="fa-solid fa-vault"></i>
+                <div id="nav-avatar-container" class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow overflow-hidden">
+                    <img id="nav-avatar-img" src="" class="w-full h-full object-cover hidden">
+                    <i id="nav-avatar-icon" class="fa-solid fa-vault"></i>
                 </div>
                 <div>
                     <span class="font-bold text-lg text-slate-900 block leading-none">Cashflowbank</span>
@@ -289,6 +290,25 @@
 
             <!-- Sidebar Info -->
             <div class="space-y-6">
+                <!-- Profile Picture Card -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm text-center space-y-4">
+                    <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden bg-slate-100 border-2 border-slate-200 shadow-inner flex items-center justify-center">
+                        <img id="sidebar-avatar-img" src="" class="w-full h-full object-cover hidden">
+                        <i id="sidebar-avatar-icon" class="fa-solid fa-user text-3xl text-slate-400"></i>
+                    </div>
+                    <div>
+                        <h4 id="sidebar-profile-name" class="font-bold text-slate-900 text-base"></h4>
+                        <p class="text-xs text-slate-400">Client Profile Avatar</p>
+                    </div>
+                    <div>
+                        <input type="file" id="avatar-file-input" accept="image/*" class="hidden" onchange="uploadProfilePicture(event)">
+                        <button onclick="document.getElementById('avatar-file-input').click()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl font-semibold text-xs transition">
+                            <i class="fa-solid fa-camera mr-1"></i> Change Avatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Account Summary -->
                 <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
                     <h3 class="font-bold text-slate-900 text-base">Account Summary</h3>
                     <div class="space-y-3 text-sm">
@@ -318,7 +338,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCBR4EQx9UXqGFgHKKKcH_11VWhumpQ4KA",
@@ -399,6 +419,7 @@
                     accountNumber: accountNumber,
                     balance: 0.00,
                     status: "pending",
+                    avatarUrl: "",
                     createdAt: new Date().toISOString()
                 });
 
@@ -440,6 +461,36 @@
             await signOut(auth);
         };
 
+        window.uploadProfilePicture = function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(uploadEvent) {
+                const base64Image = uploadEvent.target.result;
+                const user = auth.currentUser;
+                if(!user) return;
+
+                try {
+                    await updateDoc(doc(db, "users", user.uid), { avatarUrl: base64Image });
+                    
+                    // Update UI immediately
+                    document.getElementById('nav-avatar-img').src = base64Image;
+                    document.getElementById('nav-avatar-img').classList.remove('hidden');
+                    document.getElementById('nav-avatar-icon').classList.add('hidden');
+
+                    document.getElementById('sidebar-avatar-img').src = base64Image;
+                    document.getElementById('sidebar-avatar-img').classList.remove('hidden');
+                    document.getElementById('sidebar-avatar-icon').classList.add('hidden');
+
+                    alert("Profile picture updated successfully!");
+                } catch(err) {
+                    alert("Error saving profile picture: " + err.message);
+                }
+            };
+            reader.readAsDataURL(file);
+        };
+
         onAuthStateChanged(auth, async (user) => {
             const heroSection = document.getElementById('landing-hero');
             const dashboardSection = document.getElementById('dashboard-section');
@@ -448,6 +499,7 @@
             const accountBalance = document.getElementById('account-balance');
             const summaryAccountType = document.getElementById('summary-account-type');
             const summaryCountry = document.getElementById('summary-country');
+            const sidebarProfileName = document.getElementById('sidebar-profile-name');
 
             if (user) {
                 try {
@@ -473,6 +525,17 @@
                         accountBalance.innerText = `$${(data.balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
                         if(summaryAccountType) summaryAccountType.innerText = data.accountType || 'Checking';
                         if(summaryCountry) summaryCountry.innerText = data.country || 'N/A';
+                        if(sidebarProfileName) sidebarProfileName.innerText = data.name || 'Client';
+
+                        if(data.avatarUrl) {
+                            document.getElementById('nav-avatar-img').src = data.avatarUrl;
+                            document.getElementById('nav-avatar-img').classList.remove('hidden');
+                            document.getElementById('nav-avatar-icon').classList.add('hidden');
+
+                            document.getElementById('sidebar-avatar-img').src = data.avatarUrl;
+                            document.getElementById('sidebar-avatar-img').classList.remove('hidden');
+                            document.getElementById('sidebar-avatar-icon').classList.add('hidden');
+                        }
                     }
                 } catch(err) {
                     console.error("Error verifying user status:", err);
