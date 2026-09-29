@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="html-root" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cashflowbank - Next-Gen Global Banking</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -25,14 +30,14 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden relative">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased overflow-x-hidden relative transition-colors duration-300">
 
     <!-- FLOATING BACKGROUND GLOW SPHERES -->
-    <div class="absolute top-20 left-10 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none glow-sphere"></div>
-    <div class="absolute top-96 right-10 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none glow-sphere" style="animation-delay: 3s;"></div>
+    <div class="absolute top-20 left-10 w-96 h-96 bg-blue-400/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none glow-sphere"></div>
+    <div class="absolute top-96 right-10 w-[30rem] h-[30rem] bg-indigo-500/10 dark:bg-indigo-600/10 rounded-full blur-3xl pointer-events-none glow-sphere" style="animation-delay: 3s;"></div>
 
     <!-- GLOBAL ANNOUNCEMENT & TICKER BAR -->
-    <div class="bg-slate-900 text-white px-4 py-2 text-xs flex justify-between items-center z-50 relative border-b border-slate-800">
+    <div class="bg-slate-900 dark:bg-slate-900 text-white px-4 py-2 text-xs flex justify-between items-center z-50 relative border-b border-slate-800">
         <div id="global-announcement" class="hidden items-center space-x-2">
             <i class="fa-solid fa-bullhorn text-blue-400"></i>
             <span id="announcement-message">Welcome to Cashflowbank.</span>
@@ -50,13 +55,16 @@
         <!-- Navbar -->
         <header class="max-w-7xl w-full mx-auto px-6 py-6 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-md shadow-blue-200">
+                <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-md shadow-blue-200 dark:shadow-none">
                     <i class="fa-solid fa-vault"></i>
                 </div>
-                <span class="font-extrabold text-xl text-slate-900 tracking-tight">Cashflowbank</span>
+                <span class="font-extrabold text-xl text-slate-900 dark:text-white tracking-tight">Cashflowbank</span>
             </div>
-            <div>
-                <button onclick="scrollToAuth('login')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200 transition">
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center transition" title="Toggle Theme">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+                <button onclick="scrollToAuth('login')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200 dark:shadow-none transition">
                     Client Portal
                 </button>
             </div>
@@ -65,53 +73,51 @@
         <!-- Main Hero Section Content -->
         <main class="max-w-7xl w-full mx-auto px-6 py-12 space-y-20">
             
-            <!-- Top Split Grid (Hero + Auth Box) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
                 
                 <!-- Floating Glass UI Widget over Hero Text -->
-                <div class="absolute -top-10 left-0 hidden lg:flex items-center space-x-3 bg-white/80 backdrop-blur-md border border-slate-200/80 px-4 py-3 rounded-2xl shadow-xl floating-element">
-                    <div class="w-9 h-9 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center font-bold">
+                <div class="absolute -top-10 left-0 hidden lg:flex items-center space-x-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800 px-4 py-3 rounded-2xl shadow-xl floating-element">
+                    <div class="w-9 h-9 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center font-bold">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <div>
                         <p class="text-[10px] uppercase font-bold text-slate-400">Security Index</p>
-                        <p class="text-xs font-black text-slate-800">256-Bit SSL Encryption Active</p>
+                        <p class="text-xs font-black text-slate-800 dark:text-slate-200">256-Bit SSL Encryption Active</p>
                     </div>
                 </div>
 
                 <div class="space-y-6 pt-6">
-                    <span class="bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">Secure Institutional Banking</span>
-                    <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight">
+                    <span class="bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">Secure Institutional Banking</span>
+                    <h1 class="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight">
                         Smart Financial Growth for the <span class="text-blue-600">Modern Era</span>.
                     </h1>
-                    <p class="text-slate-600 text-base md:text-lg leading-relaxed">
+                    <p class="text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed">
                         Experience lightning-fast wire transfers, institutional-grade security, and round-the-clock liquidity management tailored for your enterprise and personal assets.
                     </p>
                     <div class="flex space-x-4 pt-2">
-                        <button onclick="scrollToAuth('register')" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3.5 rounded-xl font-bold text-sm shadow-xl transition">
+                        <button onclick="scrollToAuth('register')" class="bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white px-6 py-3.5 rounded-xl font-bold text-sm shadow-xl transition">
                             Open an Account
                         </button>
-                        <button onclick="scrollToAuth('login')" class="bg-white hover:bg-slate-100 text-slate-900 border border-slate-200 px-6 py-3.5 rounded-xl font-bold text-sm transition">
+                        <button onclick="scrollToAuth('login')" class="bg-white hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 px-6 py-3.5 rounded-xl font-bold text-sm transition">
                             Account Sign In
                         </button>
                     </div>
                 </div>
 
                 <!-- Interactive Auth Card Box on Hero -->
-                <div id="auth-card-container" class="bg-white/90 backdrop-blur-xl max-w-md w-full mx-auto rounded-3xl shadow-2xl p-8 border border-slate-100 relative">
+                <div id="auth-card-container" class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl max-w-md w-full mx-auto rounded-3xl shadow-2xl p-8 border border-slate-100 dark:border-slate-800 relative">
                     
-                    <!-- Floating Badge on Auth Box -->
                     <div class="absolute -top-4 -right-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg floating-element" style="animation-delay: 1.5s;">
                         <i class="fa-solid fa-bolt mr-1"></i> Instant Setup
                     </div>
 
                     <div class="text-center mb-6">
-                        <h2 id="auth-form-title" class="text-2xl font-bold text-slate-900">Account Access</h2>
+                        <h2 id="auth-form-title" class="text-2xl font-bold text-slate-900 dark:text-white">Account Access</h2>
                         <p class="text-xs text-slate-400">Log in with your 10-digit account number</p>
                     </div>
 
                     <!-- Tabs -->
-                    <div class="flex border-b border-slate-200 mb-6">
+                    <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6">
                         <button onclick="switchTab('login')" id="tab-login" class="flex-1 pb-3 text-sm font-semibold text-blue-600 border-b-2 border-blue-600 transition">Sign In</button>
                         <button onclick="switchTab('register')" id="tab-register" class="flex-1 pb-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent transition">Register</button>
                     </div>
@@ -119,71 +125,71 @@
                     <!-- Login Form -->
                     <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">10-Digit Account Number</label>
-                            <input type="text" id="login-account-number" placeholder="e.g. 1049283921" maxlength="10" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono">
+                            <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">10-Digit Account Number</label>
+                            <input type="text" id="login-account-number" placeholder="e.g. 1049283921" maxlength="10" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
-                            <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                            <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Password</label>
+                            <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition">Access Dashboard</button>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg transition">Access Dashboard</button>
                     </form>
 
                     <!-- Expanded Register Form -->
                     <form id="register-form" onsubmit="handleRegister(event)" class="space-y-3 hidden">
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Full Name</label>
-                            <input type="text" id="reg-name" required placeholder="John Doe" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                            <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Full Name</label>
+                            <input type="text" id="reg-name" required placeholder="John Doe" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Email Address</label>
-                            <input type="email" id="reg-email" required placeholder="john@example.com" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                            <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Email Address</label>
+                            <input type="email" id="reg-email" required placeholder="john@example.com" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white text-sm">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Account Type</label>
-                                <select id="reg-account-type" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-white">
+                                <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Account Type</label>
+                                <select id="reg-account-type" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white text-sm">
                                     <option value="Checking">Checking</option>
                                     <option value="Savings">Savings</option>
                                     <option value="Business">Business</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Country</label>
-                                <input type="text" id="reg-country" required placeholder="United States" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Country</label>
+                                <input type="text" id="reg-country" required placeholder="United States" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white text-sm">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Password</label>
-                                <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">Password</label>
+                                <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">4-Digit PIN</label>
-                                <input type="password" id="reg-pin" maxlength="4" required placeholder="1234" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono">
+                                <label class="block text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 mb-1">4-Digit PIN</label>
+                                <input type="password" id="reg-pin" maxlength="4" required placeholder="1234" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white text-sm font-mono">
                             </div>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-blue-200 transition mt-2">Submit Application</button>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow-lg transition mt-2">Submit Application</button>
                     </form>
                     <p id="auth-error" class="text-rose-500 text-xs mt-4 text-center hidden"></p>
                 </div>
             </div>
 
             <!-- Extended Hero Metrics Bar -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-slate-200">
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
-                    <h3 class="text-3xl font-black text-slate-900">$4.8B+</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-slate-200 dark:border-slate-800">
+                <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm text-center">
+                    <h3 class="text-3xl font-black text-slate-900 dark:text-white">$4.8B+</h3>
                     <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Secured Assets</p>
                 </div>
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm text-center">
                     <h3 class="text-3xl font-black text-blue-600">120K+</h3>
                     <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Active Accounts</p>
                 </div>
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
-                    <h3 class="text-3xl font-black text-slate-900">99.99%</h3>
+                <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm text-center">
+                    <h3 class="text-3xl font-black text-slate-900 dark:text-white">99.99%</h3>
                     <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">System Uptime</p>
                 </div>
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm text-center">
                     <h3 class="text-3xl font-black text-blue-600">24/7</h3>
                     <p class="text-xs text-slate-500 uppercase tracking-wider mt-1">Dedicated Support</p>
                 </div>
@@ -192,38 +198,38 @@
             <!-- Extended Services Overview Grid -->
             <div class="space-y-12 py-12">
                 <div class="text-center max-w-2xl mx-auto space-y-3">
-                    <h2 class="text-3xl font-black text-slate-900">Built for Enterprise & Personal Excellence</h2>
-                    <p class="text-slate-600 text-sm">Manage your finances with world-class tools designed for speed, transparency, and absolute safety.</p>
+                    <h2 class="text-3xl font-black text-slate-900 dark:text-white">Built for Enterprise & Personal Excellence</h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm">Manage your finances with world-class tools designed for speed, transparency, and absolute safety.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                    <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center text-xl font-bold">
                             <i class="fa-solid fa-globe"></i>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900">Global Wire Transfers</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed">Send and receive funds across international borders instantaneously with transparent FX conversion rates.</p>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Global Wire Transfers</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Send and receive funds across international borders instantaneously with transparent FX conversion rates.</p>
                     </div>
-                    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                    <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center text-xl font-bold">
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900">Military-Grade Encryption</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed">Your data and capital are protected by multi-layer authentication, pin verification, and real-time fraud monitoring.</p>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Military-Grade Encryption</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Your data and capital are protected by multi-layer authentication, pin verification, and real-time fraud monitoring.</p>
                     </div>
-                    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                    <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center text-xl font-bold">
                             <i class="fa-solid fa-chart-line"></i>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900">Advanced Liquidity</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed">Access high-yield savings, checking reserves, and customized business liquidity options seamlessly.</p>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Advanced Liquidity</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Access high-yield savings, checking reserves, and customized business liquidity options seamlessly.</p>
                     </div>
                 </div>
             </div>
 
         </main>
 
-        <footer class="text-center py-8 text-xs text-slate-400 border-t border-slate-200">
+        <footer class="text-center py-8 text-xs text-slate-400 border-t border-slate-200 dark:border-slate-800">
             &copy; 2026 Cashflowbank. Member FDIC. All rights reserved.
         </footer>
     </div>
@@ -231,20 +237,23 @@
     <!-- USER DASHBOARD SECTION (Hidden by default) -->
     <div id="dashboard-section" class="hidden min-h-screen flex flex-col">
         <!-- Top Navbar -->
-        <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
+        <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex justify-between items-center shadow-sm">
             <div class="flex items-center space-x-3">
                 <div id="nav-avatar-container" class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow overflow-hidden">
                     <img id="nav-avatar-img" src="" class="w-full h-full object-cover hidden">
                     <i id="nav-avatar-icon" class="fa-solid fa-vault"></i>
                 </div>
                 <div>
-                    <span class="font-bold text-lg text-slate-900 block leading-none">Cashflowbank</span>
+                    <span class="font-bold text-lg text-slate-900 dark:text-white block leading-none">Cashflowbank</span>
                     <span class="text-xs text-slate-400 font-mono" id="nav-account-number">Acc: --</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <span id="user-display-email" class="text-sm font-medium text-slate-600 hidden sm:inline"></span>
-                <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-2 rounded-xl text-xs font-semibold transition">
+                <button onclick="toggleTheme()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center transition">
+                    <i id="theme-icon-dash" class="fa-solid fa-moon"></i>
+                </button>
+                <span id="user-display-email" class="text-sm font-medium text-slate-600 dark:text-slate-300 hidden sm:inline"></span>
+                <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 px-3 py-2 rounded-xl text-xs font-semibold transition">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
                 </button>
             </div>
@@ -269,20 +278,20 @@
                 </div>
 
                 <!-- Recent Transactions -->
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <h3 class="font-bold text-slate-900 mb-4 text-base">Account Activity Ledger</h3>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <h3 class="font-bold text-slate-900 dark:text-white mb-4 text-base">Account Activity Ledger</h3>
                     <div class="space-y-4" id="transaction-list">
-                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                             <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-bold">
+                                <div class="w-10 h-10 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center font-bold">
                                     <i class="fa-solid fa-shield-check"></i>
                                 </div>
                                 <div>
-                                    <h4 class="text-sm font-bold text-slate-900">Account Activated</h4>
+                                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Account Activated</h4>
                                     <p class="text-xs text-slate-400">Verified by Cashflowbank Admin</p>
                                 </div>
                             </div>
-                            <span class="text-blue-600 font-bold text-sm">Verified</span>
+                            <span class="text-blue-600 dark:text-blue-400 font-bold text-sm">Verified</span>
                         </div>
                     </div>
                 </div>
@@ -291,42 +300,42 @@
             <!-- Sidebar Info -->
             <div class="space-y-6">
                 <!-- Profile Picture Card -->
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm text-center space-y-4">
-                    <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden bg-slate-100 border-2 border-slate-200 shadow-inner flex items-center justify-center">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm text-center space-y-4">
+                    <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-inner flex items-center justify-center">
                         <img id="sidebar-avatar-img" src="" class="w-full h-full object-cover hidden">
                         <i id="sidebar-avatar-icon" class="fa-solid fa-user text-3xl text-slate-400"></i>
                     </div>
                     <div>
-                        <h4 id="sidebar-profile-name" class="font-bold text-slate-900 text-base"></h4>
+                        <h4 id="sidebar-profile-name" class="font-bold text-slate-900 dark:text-white text-base"></h4>
                         <p class="text-xs text-slate-400">Client Profile Avatar</p>
                     </div>
                     <div>
                         <input type="file" id="avatar-file-input" accept="image/*" class="hidden" onchange="uploadProfilePicture(event)">
-                        <button onclick="document.getElementById('avatar-file-input').click()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl font-semibold text-xs transition">
+                        <button onclick="document.getElementById('avatar-file-input').click()" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 py-2.5 rounded-xl font-semibold text-xs transition">
                             <i class="fa-solid fa-camera mr-1"></i> Change Avatar
                         </button>
                     </div>
                 </div>
 
                 <!-- Account Summary -->
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-                    <h3 class="font-bold text-slate-900 text-base">Account Summary</h3>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base">Account Summary</h3>
                     <div class="space-y-3 text-sm">
-                        <div class="flex justify-between pb-2 border-b border-slate-100">
+                        <div class="flex justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                             <span class="text-slate-500">Status</span>
-                            <span class="text-emerald-600 font-bold uppercase text-xs bg-emerald-50 px-2 py-0.5 rounded">Active</span>
+                            <span class="text-emerald-600 font-bold uppercase text-xs bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded">Active</span>
                         </div>
-                        <div class="flex justify-between pb-2 border-b border-slate-100">
+                        <div class="flex justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                             <span class="text-slate-500">Account Type</span>
-                            <span id="summary-account-type" class="font-semibold text-slate-800">Checking</span>
+                            <span id="summary-account-type" class="font-semibold text-slate-800 dark:text-slate-200">Checking</span>
                         </div>
-                        <div class="flex justify-between pb-2 border-b border-slate-100">
+                        <div class="flex justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                             <span class="text-slate-500">Country</span>
-                            <span id="summary-country" class="font-semibold text-slate-800">USA</span>
+                            <span id="summary-country" class="font-semibold text-slate-800 dark:text-slate-200">USA</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Routing Number</span>
-                            <span class="font-mono font-semibold text-slate-800">021000021</span>
+                            <span class="font-mono font-semibold text-slate-800 dark:text-slate-200">021000021</span>
                         </div>
                     </div>
                 </div>
@@ -334,7 +343,7 @@
         </main>
     </div>
 
-    <!-- Firebase SDK Scripts -->
+    <!-- Firebase SDK Scripts & Theme Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -352,6 +361,36 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // Theme Toggle Logic
+        window.toggleTheme = function() {
+            const root = document.getElementById('html-root');
+            const isDark = root.classList.contains('dark');
+            if (isDark) {
+                root.classList.remove('dark');
+                root.classList.add('light');
+                localStorage.setItem('cfb_theme', 'light');
+                updateThemeIcons('light');
+            } else {
+                root.classList.remove('light');
+                root.classList.add('dark');
+                localStorage.setItem('cfb_theme', 'dark');
+                updateThemeIcons('dark');
+            }
+        };
+
+        function updateThemeIcons(theme) {
+            const icon1 = document.getElementById('theme-icon');
+            const icon2 = document.getElementById('theme-icon-dash');
+            const iconClass = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            if(icon1) icon1.className = iconClass;
+            if(icon2) icon2.className = iconClass;
+        }
+
+        // Initialize Theme from Storage
+        const savedTheme = localStorage.getItem('cfb_theme') || 'light';
+        document.getElementById('html-root').className = savedTheme;
+        updateThemeIcons(savedTheme);
 
         async function loadAnnouncement() {
             try {
@@ -474,7 +513,6 @@
                 try {
                     await updateDoc(doc(db, "users", user.uid), { avatarUrl: base64Image });
                     
-                    // Update UI immediately
                     document.getElementById('nav-avatar-img').src = base64Image;
                     document.getElementById('nav-avatar-img').classList.remove('hidden');
                     document.getElementById('nav-avatar-icon').classList.add('hidden');
