@@ -7,6 +7,13 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #printable-statement, #printable-statement * { visibility: visible; }
+            #printable-statement { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased overflow-x-hidden relative transition-colors duration-300">
 
@@ -119,10 +126,10 @@
     </div>
 
     <!-- MAIN APP DASHBOARD -->
-    <div id="dashboard-section" class="hidden min-h-screen flex flex-col md:flex-row">
+    <div id="dashboard-section" class="hidden min-h-screen flex flex-col md:flex-row relative">
         
-        <!-- SIDE NAVIGATION DRAWER -->
-        <aside id="side-drawer" class="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 select-none transition-transform duration-300 z-40">
+        <!-- SIDE NAVIGATION DRAWER (FIXED MOBILE OVERLAY) -->
+        <aside id="side-drawer" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:static w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 select-none transition-transform duration-300 z-50 shadow-2xl md:shadow-none">
             <div>
                 <div class="p-6 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center space-x-3">
@@ -131,6 +138,9 @@
                         </div>
                         <span class="font-extrabold text-lg text-slate-900 dark:text-white">OakbridgeCU</span>
                     </div>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 hover:text-slate-600">
+                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    </button>
                 </div>
 
                 <div class="p-4 space-y-6 text-sm font-medium">
@@ -145,11 +155,13 @@
                                 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
                                 <span>Account Summary</span>
                             </button>
-                            <button onclick="switchTab('transfer')" id="nav-transfer" class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
-                                <div class="flex items-center space-x-3">
-                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3V8h18v10zM5 10h4v2H5z"/></svg>
-                                    <span>Transfer</span>
-                                </div>
+                            <button onclick="switchTab('statements')" id="nav-statements" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                                <span>PDF Statements</span>
+                            </button>
+                            <button onclick="switchTab('transfer')" id="nav-transfer" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3V8h18v10zM5 10h4v2H5z"/></svg>
+                                <span>Transfer</span>
                             </button>
                             <button onclick="switchTab('deposit-check')" id="nav-deposit-check" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
                                 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
@@ -324,7 +336,79 @@
                     </div>
                 </div>
 
-                <!-- VIEW 3: TRANSFER (WITH LIVE RECIPIENT VALIDATION) -->
+                <!-- VIEW 3: PDF STATEMENTS GENERATOR -->
+                <div id="view-statements" class="space-y-6 hidden">
+                    <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                        <div class="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-xl">Official Bank Statements</h3>
+                                <p class="text-xs text-slate-400">Generate, download, or print formal account statements.</p>
+                            </div>
+                            <button onclick="window.print()" class="bg-rose-900 hover:bg-rose-950 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow transition">Download PDF / Print</button>
+                        </div>
+
+                        <!-- STATEMENT LETTERHEAD PREVIEW -->
+                        <div id="printable-statement" class="bg-white text-slate-900 p-8 rounded-2xl border border-slate-200 space-y-6">
+                            <div class="flex justify-between items-start border-b pb-6">
+                                <div>
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <div class="w-8 h-8 bg-rose-900 text-white rounded-lg flex items-center justify-center font-bold">O</div>
+                                        <span class="font-extrabold text-xl tracking-tight text-slate-900">OakbridgeCU</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">100 Financial Plaza, New York, NY</p>
+                                    <p class="text-xs text-slate-500">Member FDIC &bull; Global Institutional Banking</p>
+                                </div>
+                                <div class="text-right">
+                                    <h4 class="font-bold text-lg uppercase tracking-wider text-slate-800">Account Statement</h4>
+                                    <p class="text-xs text-slate-500 font-mono mt-1" id="stmt-date">Statement Date: Sep 2026</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div>
+                                    <p class="text-slate-400 uppercase font-semibold">Account Holder</p>
+                                    <p id="stmt-holder" class="font-bold text-slate-800 text-sm mt-0.5">--</p>
+                                </div>
+                                <div>
+                                    <p class="text-slate-400 uppercase font-semibold">Account Number</p>
+                                    <p id="stmt-acc" class="font-mono font-bold text-slate-800 text-sm mt-0.5">--</p>
+                                </div>
+                                <div>
+                                    <p class="text-slate-400 uppercase font-semibold">Account Type</p>
+                                    <p id="stmt-type" class="font-bold text-slate-800 mt-0.5">Current Account</p>
+                                </div>
+                                <div>
+                                    <p class="text-slate-400 uppercase font-semibold">Current Balance</p>
+                                    <p id="stmt-bal" class="font-mono font-bold text-slate-800 mt-0.5">$0.00</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h5 class="font-bold text-xs uppercase tracking-wider text-slate-500 mb-3">Itemized Transaction History</h5>
+                                <div class="border rounded-xl overflow-hidden">
+                                    <table class="w-full text-left text-xs">
+                                        <thead class="bg-slate-100 text-slate-600 uppercase font-semibold">
+                                            <tr>
+                                                <th class="p-3">Date</th>
+                                                <th class="p-3">Description</th>
+                                                <th class="p-3 text-right">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="stmt-tx-tbody" class="divide-y divide-slate-100">
+                                            <tr><td colspan="3" class="p-4 text-center text-slate-400">No transactions recorded for this period.</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="text-[10px] text-slate-400 pt-6 border-t text-center">
+                                This is an electronically generated official statement from OakbridgeCU. For inquiries, contact support@oakbridgecu.com.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: TRANSFER -->
                 <div id="view-transfer" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto space-y-6">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Wire Transfer Gateway</h3>
@@ -332,7 +416,6 @@
                             <div>
                                 <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Recipient Account Number (10 Digits)</label>
                                 <input type="text" id="transfer-acc" maxlength="10" oninput="verifyRecipientAccount(this.value)" required placeholder="20xxxxxxxx" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent dark:text-white font-mono text-sm">
-                                <!-- Live Recipient Verification Feedback Box -->
                                 <div id="recipient-feedback" class="mt-2 text-xs p-3 rounded-xl hidden"></div>
                             </div>
                             <div>
@@ -348,7 +431,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 4: DEPOSIT CHECK -->
+                <!-- VIEW 5: DEPOSIT CHECK -->
                 <div id="view-deposit-check" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto space-y-6 text-center">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Mobile Check Deposit</h3>
@@ -361,7 +444,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 5: DEPOSIT CRYPTO -->
+                <!-- VIEW 6: DEPOSIT CRYPTO -->
                 <div id="view-deposit-crypto" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto space-y-6 text-center">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Cryptocurrency Vault Deposit</h3>
@@ -371,7 +454,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 6: LOANS -->
+                <!-- VIEW 7: LOANS -->
                 <div id="view-loans" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">Institutional Credit & Loans</h3>
@@ -380,7 +463,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 7: CARDS -->
+                <!-- VIEW 8: CARDS -->
                 <div id="view-cards" class="space-y-6 hidden">
                     <div class="bg-gradient-to-r from-slate-900 to-rose-950 text-white p-8 rounded-3xl shadow-2xl max-w-md mx-auto space-y-8 relative overflow-hidden">
                         <div class="flex justify-between items-center"><span class="font-bold tracking-widest uppercase text-xs text-slate-400">Oakbridge Black Infinite</span></div>
@@ -392,7 +475,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 8: PROFILE -->
+                <!-- VIEW 9: PROFILE -->
                 <div id="view-profile" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 text-center max-w-xl mx-auto">
                         <div class="relative w-28 h-28 mx-auto rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 flex items-center justify-center">
@@ -404,7 +487,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 9: SUPPORT -->
+                <!-- VIEW 10: SUPPORT -->
                 <div id="view-support" class="space-y-6 hidden">
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
                         <h3 class="font-bold text-slate-900 dark:text-white text-xl">24/7 Dedicated Client Support</h3>
@@ -458,7 +541,7 @@
             document.getElementById('auth-card-container').scrollIntoView({ behavior: 'smooth' });
         };
 
-        const views = ['dashboard', 'summary', 'transfer', 'deposit-check', 'deposit-crypto', 'loans', 'cards', 'profile', 'support'];
+        const views = ['dashboard', 'summary', 'statements', 'transfer', 'deposit-check', 'deposit-crypto', 'loans', 'cards', 'profile', 'support'];
         
         window.switchTab = function(tabName) {
             views.forEach(v => {
@@ -473,11 +556,17 @@
 
             const targetBtn = document.getElementById(`nav-${tabName}`);
             if(targetBtn) targetBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-rose-800 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 font-bold";
+
+            // Automatically close mobile menu drawer upon tab selection
+            const drawer = document.getElementById('side-drawer');
+            if(window.innerWidth < 768) {
+                drawer.classList.add('-translate-x-full');
+            }
         };
 
         window.toggleMobileMenu = function() {
             const drawer = document.getElementById('side-drawer');
-            drawer.classList.toggle('hidden');
+            drawer.classList.toggle('-translate-x-full');
         };
 
         window.toggleBalanceVisibility = function() {
@@ -494,7 +583,6 @@
             }
         };
 
-        // OPTION 2: LIVE RECIPIENT ACCOUNT VALIDATION
         window.verifyRecipientAccount = async function(accountNum) {
             const feedbackBox = document.getElementById('recipient-feedback');
             const submitBtn = document.getElementById('transfer-submit-btn');
@@ -542,10 +630,7 @@
                     feedbackBox.innerHTML = `❌ Unregistered or invalid account number.`;
                     submitBtn.disabled = true;
                 }
-            } catch(err) {
-                console.error(err);
-                feedbackBox.innerHTML = `❌ Error verifying account.`;
-            }
+            } catch(err) { console.error(err); }
         };
 
         window.handleRegister = async function(e) {
@@ -635,6 +720,12 @@
                     document.getElementById('summary-country').innerText = currentUserData.country;
                     document.getElementById('summary-account-type-title').innerText = currentUserData.accountType;
 
+                    // Populate Statement view
+                    document.getElementById('stmt-holder').innerText = currentUserData.name;
+                    document.getElementById('stmt-acc').innerText = currentUserData.accountNumber;
+                    document.getElementById('stmt-type').innerText = currentUserData.accountType;
+                    document.getElementById('stmt-bal').innerText = `$${currentUserData.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
                     const formattedBal = `$${currentUserData.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
                     document.getElementById('account-balance').innerText = formattedBal;
                     document.getElementById('summary-balance').innerText = formattedBal;
@@ -646,17 +737,28 @@
                     }
 
                     const txList = document.getElementById('transaction-list');
+                    const stmtTbody = document.getElementById('stmt-tx-tbody');
+                    
                     if(currentUserData.transactions && currentUserData.transactions.length > 0) {
                         txList.innerHTML = "";
+                        stmtTbody.innerHTML = "";
                         currentUserData.transactions.slice().reverse().forEach(tx => {
+                            const dateStr = `${new Date(tx.date).toLocaleDateString()} ${new Date(tx.date).toLocaleTimeString()}`;
                             txList.innerHTML += `
                                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 text-sm">
                                     <div>
                                         <h4 class="font-bold text-slate-900 dark:text-white">${tx.desc}</h4>
-                                        <p class="text-[11px] text-slate-400">${new Date(tx.date).toLocaleDateString()} ${new Date(tx.date).toLocaleTimeString()}</p>
+                                        <p class="text-[11px] text-slate-400">${dateStr}</p>
                                     </div>
                                     <span class="font-mono font-bold text-rose-500">-$${tx.amount.toFixed(2)}</span>
                                 </div>
+                            `;
+                            stmtTbody.innerHTML += `
+                                <tr>
+                                    <td class="p-3 font-mono">${dateStr}</td>
+                                    <td class="p-3 font-medium">${tx.desc}</td>
+                                    <td class="p-3 text-right font-mono text-rose-600">-$${tx.amount.toFixed(2)}</td>
+                                </tr>
                             `;
                         });
                     }
