@@ -46,7 +46,7 @@
                 </div>
                 <div>
                     <span class="font-extrabold text-lg tracking-tight block leading-none">Cashflowbank</span>
-                    <span class="text-[10px] text-blue-400 font-mono uppercase tracking-wider">Institutional Admin v2.4</span>
+                    <span class="text-[10px] text-blue-400 font-mono uppercase tracking-wider">Institutional Admin v2.6</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
@@ -94,7 +94,7 @@
                 <div class="p-6 border-b border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
                     <div>
                         <h3 class="font-bold text-slate-900 text-lg">Client Directory & Accounts</h3>
-                        <p class="text-xs text-slate-400">Manage statuses, inspect credentials, and adjust asset balances.</p>
+                        <p class="text-xs text-slate-400">Inspect client credentials, balances, statuses, and creation dates.</p>
                     </div>
                     <div class="flex items-center space-x-3 w-full md:w-auto">
                         <input type="text" id="search-filter" onkeyup="filterUsers()" placeholder="Search name, email, or account #" class="px-4 py-2 rounded-xl border border-slate-200 text-sm w-full md:w-64 focus:ring-2 focus:ring-blue-500 focus:outline-none">
@@ -112,9 +112,10 @@
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 text-[11px] uppercase tracking-wider font-semibold">
                                 <th class="p-4">Account Number / Name</th>
-                                <th class="p-4">Email / Country</th>
-                                <th class="p-4">Type / PIN</th>
+                                <th class="p-4">Credentials (Email / PIN)</th>
+                                <th class="p-4">Type / Country</th>
                                 <th class="p-4">Balance</th>
+                                <th class="p-4">Joined Date</th>
                                 <th class="p-4">Status</th>
                                 <th class="p-4 text-right">Administrative Actions</th>
                             </tr>
@@ -129,22 +130,29 @@
         </main>
     </div>
 
-    <!-- ADJUST BALANCE MODAL -->
+    <!-- EDIT ACCOUNT MODAL (Balance & Created Date) -->
     <div id="balance-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center">
-                <h3 class="font-bold text-slate-900 text-lg">Adjust Account Balance</h3>
+                <h3 class="font-bold text-slate-900 text-lg">Edit Account Details</h3>
                 <button onclick="closeBalanceModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <p class="text-xs text-slate-500" id="modal-target-info">Target Account: --</p>
             <input type="hidden" id="modal-target-uid">
+            
             <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">New Balance Amount ($)</label>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Balance Amount ($)</label>
                 <input type="number" step="0.01" id="modal-new-balance" required class="w-full px-4 py-3 rounded-xl border border-slate-200 font-mono text-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
+
+            <div>
+                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Account Created Date & Time</label>
+                <input type="datetime-local" id="modal-created-at" required class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
             <div class="flex space-x-3 pt-2">
                 <button onclick="closeBalanceModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-semibold text-sm transition">Cancel</button>
-                <button onclick="saveNewBalance()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow transition">Commit Changes</button>
+                <button onclick="saveAccountEdits()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm shadow transition">Commit Changes</button>
             </div>
         </div>
     </div>
@@ -153,7 +161,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, getDocs, updateDbDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCBR4EQx9UXqGFgHKKKcH_11VWhumpQ4KA",
@@ -210,13 +218,11 @@
 
         async function loadAdminData() {
             try {
-                // Load existing announcement
                 const annDoc = await getDoc(doc(db, "system", "announcement"));
                 if(annDoc.exists()) {
                     document.getElementById('announcement-input').value = annDoc.data().message || "";
                 }
 
-                // Load Users
                 const querySnapshot = await getDocs(collection(db, "users"));
                 allUsersData = [];
                 let totalLiquidity = 0;
@@ -247,7 +253,7 @@
             tbody.innerHTML = "";
 
             if(users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">No client records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No client records found.</td></tr>`;
                 return;
             }
 
@@ -255,6 +261,14 @@
                 let badgeColor = "bg-amber-50 text-amber-600";
                 if(user.status === "active") badgeColor = "bg-emerald-50 text-emerald-600";
                 if(user.status === "frozen") badgeColor = "bg-rose-50 text-rose-600";
+
+                let formattedDate = "N/A";
+                if(user.createdAt) {
+                    const d = new Date(user.createdAt);
+                    if(!isNaN(d)) {
+                        formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    }
+                }
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50/80 transition";
@@ -264,21 +278,24 @@
                         <span class="text-xs font-mono text-blue-600">Acc: ${user.accountNumber || 'N/A'}</span>
                     </td>
                     <td class="p-4">
-                        <span class="text-slate-700 block">${user.email}</span>
-                        <span class="text-xs text-slate-400">${user.country || 'N/A'}</span>
+                        <span class="text-slate-700 block font-medium">${user.email || 'N/A'}</span>
+                        <span class="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded inline-block mt-1">PIN: ${user.pin || '----'}</span>
                     </td>
                     <td class="p-4">
                         <span class="font-semibold text-slate-800">${user.accountType || 'Checking'}</span>
-                        <span class="text-xs font-mono text-slate-400 block">PIN: ${user.pin || '----'}</span>
+                        <span class="text-xs text-slate-400 block">${user.country || 'N/A'}</span>
                     </td>
                     <td class="p-4 font-mono font-bold text-slate-900">
                         $${(Number(user.balance) || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}
+                    </td>
+                    <td class="p-4 text-xs font-mono text-slate-600">
+                        ${formattedDate}
                     </td>
                     <td class="p-4">
                         <span class="text-xs font-bold uppercase px-2.5 py-1 rounded-full ${badgeColor}">${user.status || 'pending'}</span>
                     </td>
                     <td class="p-4 text-right space-x-2">
-                        <button onclick="openBalanceModal('${user.id}', '${user.name}', ${user.balance || 0})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition" title="Edit Balance"><i class="fa-solid fa-wallet"></i></button>
+                        <button onclick="openBalanceModal('${user.id}', '${user.name || 'User'}', ${user.balance || 0}, '${user.createdAt || ''}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition" title="Edit Account"><i class="fa-solid fa-pen-to-square"></i></button>
                         ${user.status !== 'active' ? `<button onclick="updateUserStatus('${user.id}', 'active')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Approve</button>` : ''}
                         ${user.status !== 'frozen' ? `<button onclick="updateUserStatus('${user.id}', 'frozen')" class="bg-amber-50 hover:bg-amber-100 text-amber-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Freeze</button>` : `<button onclick="updateUserStatus('${user.id}', 'active')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Unfreeze</button>`}
                     </td>
@@ -322,10 +339,20 @@
             }
         };
 
-        window.openBalanceModal = function(id, name, currentBalance) {
+        window.openBalanceModal = function(id, name, currentBalance, createdAt) {
             document.getElementById('modal-target-uid').value = id;
             document.getElementById('modal-target-info').innerText = `Target Account: ${name} (ID: ${id})`;
             document.getElementById('modal-new-balance').value = currentBalance;
+            
+            let dateVal = "";
+            if(createdAt) {
+                const d = new Date(createdAt);
+                if(!isNaN(d)) {
+                    dateVal = d.toISOString().slice(0, 16);
+                }
+            }
+            document.getElementById('modal-created-at').value = dateVal;
+
             document.getElementById('balance-modal').classList.remove('hidden');
             document.getElementById('balance-modal').classList.add('flex');
         };
@@ -335,22 +362,28 @@
             document.getElementById('balance-modal').classList.remove('flex');
         };
 
-        window.saveNewBalance = async function() {
+        window.saveAccountEdits = async function() {
             const uid = document.getElementById('modal-target-uid').value;
             const newBalance = parseFloat(document.getElementById('modal-new-balance').value);
+            const newCreatedAt = document.getElementById('modal-created-at').value;
 
             if(isNaN(newBalance)) {
-                alert("Please enter a valid number amount.");
+                alert("Please enter a valid number amount for the balance.");
                 return;
             }
 
             try {
-                await updateDoc(doc(db, "users", uid), { balance: newBalance });
-                alert("Account balance adjusted successfully.");
+                const updatePayload = { balance: newBalance };
+                if(newCreatedAt) {
+                    updatePayload.createdAt = new Date(newCreatedAt).toISOString();
+                }
+
+                await updateDoc(doc(db, "users", uid), updatePayload);
+                alert("Account details updated successfully.");
                 closeBalanceModal();
                 loadAdminData();
             } catch(e) {
-                alert("Error updating balance: " + e.message);
+                alert("Error updating account details: " + e.message);
             }
         };
     </script>
