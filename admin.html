@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Cashflowbank — Admin Panel</title>
+
+  <style>
+    :root {
+      --navy: #071b2d;
+      --green: #00a86b;
+      --green-dark: #008957;
+      --bg: #f3f6f5;
+      --card: #ffffff;
+      --text: #10202f;
+      --muted: #71808d;
+      --red: #d93025;
+      --orange: #f59e0b;
+      --border: #e0e7e9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 17px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 4px 20px rgba(0,0,0,.12);
+    }
+
+    .brand {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
+
+    .admin-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 7px 10px;
+      border-radius: 30px;
+      background: rgba(255,255,255,.12);
+    }
+
+    main {
+      width: min(1100px, 100%);
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 14px 0;
+      box-shadow: 0 7px 30px rgba(7,27,45,.06);
+      border: 1px solid rgba(0,0,0,.02);
+    }
+
+    .login-card {
+      max-width: 480px;
+      margin: 70px auto;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin: 13px 0 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      background: #fff;
+      outline: none;
+      font: inherit;
+    }
+
+    input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,168,107,.10);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px 14px;
+      border: 0;
+      border-radius: 11px;
+      background: var(--green);
+      color: white;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: .15s;
+    }
+
+    button:hover {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+    }
+
+    button.secondary {
+      background: #e8efec;
+      color: #123;
+    }
+
+    button.danger {
+      background: var(--red);
+    }
+
+    button.warning {
+      background: var(--orange);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .notice {
+      padding: 12px 14px;
+      border-radius: 11px;
+      margin-top: 14px;
+      background: #fff7df;
+      color: #745b10;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .notice.error {
+      background: #ffeceb;
+      color: #8b2019;
+    }
+
+    .notice.success {
+      background: #e8f7ef;
+      color: #12633d;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.05);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      margin-top: 5px;
+      font-size: 28px;
+      font-weight: 850;
+    }
+
+    .customer {
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 16px;
+      margin: 12px 0;
+      background: #fff;
+    }
+
+    .customer-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .customer-name {
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 30px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: #edf2f0;
+    }
+
+    .tag.pending {
+      background: #fff3cd;
+      color: #795b00;
+    }
+
+    .tag.approved {
+      background: #e8f7ef;
+      color: #12633d;
+    }
+
+    .tag.frozen {
+      background: #ffeceb;
+      color: #8b2019;
+    }
+
+    .customer-info {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .actions button {
+      margin: 0;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .search-box {
+      margin-bottom: 15px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logout-btn {
+      width: auto;
+      padding: 10px 15px;
+      margin: 0;
+    }
+
+    @media(max-width:650px) {
+      main {
+        padding: 13px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .customer-top {
+        flex-direction: column;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">Cashflowbank</div>
+  <div class="admin-badge">ADMIN PANEL</div>
+</header>
+
+<main>
+
+  <!-- =========================
+       LOGIN
+  ========================== -->
+
+  <section id="loginView">
+
+    <div class="card login-card">
+
+      <h1>Administrator Login</h1>
+
+      <p class="muted">
+        Sign in with the Firebase Authentication account
+        that has administrator access.
+      </p>
+
+      <label for="email">
+        Admin Email
+      </label>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="admin@example.com"
+        autocomplete="email"
+      >
+
+      <label for="password">
+        Password
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Enter password"
+        autocomplete="current-password"
+      >
+
+      <button onclick="login()">
+        Sign In
+      </button>
+
+      <div id="loginMsg" class="notice hidden"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       ADMIN PANEL
+  ========================== -->
+
+  <section id="panelView" class="hidden">
+
+    <div class="card">
+
+      <div class="topbar">
+
+        <div>
+          <h1>Dashboard</h1>
+
+          <p class="muted">
+            Manage Cashflowbank demo customer accounts.
+          </p>
+        </div>
+
+        <button
+          class="secondary logout-btn"
+          onclick="logout()"
+        >
+          Sign Out
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats">
+
+      <div class="stat-card">
+        <div class="stat-label">
+          TOTAL CUSTOMERS
+        </div>
+
+        <div
+          id="count"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+
+      <div class="stat-card">
+        <div class="stat-label">
+          PENDING
+        </div>
+
+        <div
+          id="pending"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+
+      <div class="stat-card">
+        <div class="stat-label">
+          FROZEN
+        </div>
+
+        <div
+          id="frozen"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+    </div>
+
+
+    <div
+      id="msg"
+      class="notice hidden"
+    ></div>
+
+
+    <!-- CUSTOMER MANAGEMENT -->
+
+    <div class="card">
+
+      <h2>Customer Accounts</h2>
+
+      <p class="muted">
+        Approve, freeze, fund, edit the displayed creation date,
+        or delete demo accounts.
+      </p>
+
+      <div class="search-box">
+
+        <input
+          id="search"
+          type="search"
+          placeholder="Search name, email or account number..."
+          oninput="renderCustomers()"
+        >
+
+      </div>
+
+      <div id="customers">
+        <p class="muted">
+          Loading customers...
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script type="module">
+
+/* =========================================
+   FIREBASE IMPORTS
+========================================= */
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+import {
+  getFunctions,
+  httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
+
+
+/* =========================================
+   FIREBASE CONFIGURATION
+========================================= */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyCEG_skNw7q1N45sdhz9OCdJtEM2Wugs",
+
+  authDomain:
+    "flow-bank-bc26f.firebaseapp.com",
+
+  projectId:
+    "flow-bank-bc26f",
+
+  storageBucket:
+    "flow-bank-bc26f.firebasestorage.app",
+
+  messagingSenderId:
+    "1053151956112",
+
+  appId:
+    "1:1053151956112:web:d74d616ae07474fdc91c15"
+
+};
+
+
+/* =========================================
+   INITIALIZE FIREBASE
+========================================= */
+
+const app =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(app);
+
+const db =
+  getFirestore(app);
+
+const functions =
+  getFunctions(app);
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+const $ = (id) =>
+  document.getElementById(id);
+
+let customers = [];
+
+
+/* =========================================
+   MESSAGE FUNCTION
+========================================= */
+
+function showMessage(
+  message,
+  type = "success"
+) {
+
+  const box = $("msg");
+
+  box.textContent = message;
+
+  box.className =
+    "notice " + type;
+
+  box.classList.remove("hidden");
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+window.login = async function () {
+
+  const email =
+    $("email").value.trim();
+
+  const password =
+    $("password").value;
+
+  if (!email || !password) {
+
+    $("loginMsg").textContent =
+      "Enter your admin email and password.";
+
+    $("loginMsg").className =
+      "notice error";
+
+    $("loginMsg").classList.remove(
+      "hidden"
+    );
+
+    return;
+  }
+
+
+  try {
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+  }
+
+  catch (error) {
+
+    $("loginMsg").textContent =
+      error.message;
+
+    $("loginMsg").className =
+      "notice error";
+
+    $("loginMsg").classList.remove(
+      "hidden"
+    );
+
+  }
+
+};
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+window.logout = async function () {
+
+  await signOut(auth);
+
+};
+
+
+/* =========================================
+   CALL CLOUD FUNCTION
+========================================= */
+
+async function callAdminFunction(
+  functionName,
+  data
+) {
+
+  const functionRef =
+    httpsCallable(
+      functions,
+      functionName
+    );
+
+  return await functionRef(data);
+
+}
+
+
+/* =========================================
+   ADMIN ACTIONS
+========================================= */
+
+window.performAction =
+async function (
+  action,
+  uid
+) {
+
+  try {
+
+    /* APPROVE */
+
+    if (action === "approve") {
+
+      await callAdminFunction(
+        "approve",
+        {
+          uid: uid
+        }
+      );
+
+      showMessage(
+        "Account approved successfully."
+      );
+
+      return;
+    }
+
+
+    /* FREEZE / UNFREEZE */
+
+    if (action === "freeze") {
+
+      await callAdminFunction(
+        "freeze",
+        {
+          uid: uid
+        }
+      );
+
+      showMessage(
+        "Account status updated."
+      );
+
+      return;
+    }
+
+
+    /* ADD DEMO FUNDS */
+
+    if (action === "fund") {
+
+      const amount =
+        prompt(
+          "Enter the amount of virtual demo funds to add:",
+          "10000"
+        );
+
+      if (amount === null) {
+        return;
+      }
+
+      const numericAmount =
+        Number(amount);
+
+      if (
+        !Number.isFinite(numericAmount) ||
+        numericAmount <= 0
+      ) {
+
+        showMessage(
+          "Enter a valid positive amount.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      await callAdminFunction(
+        "fund",
+        {
+          uid: uid,
+          amount: numericAmount
+        }
+      );
+
+      showMessage(
+        "Virtual demo funds added successfully."
+      );
+
+      return;
+    }
+
+
+    /* CHANGE CREATION DATE */
+
+    if (action === "date") {
+
+      const date =
+        prompt(
+          "Enter the new creation date/time.\n\nExample:\n2026-01-15T12:30"
+        );
+
+      if (!date) {
+        return;
+      }
+
+
+      await callAdminFunction(
+        "date",
+        {
+          uid: uid,
+          date: date
+        }
+      );
+
+      showMessage(
+        "Account creation date updated."
+      );
+
+      return;
+    }
+
+
+    /* DELETE */
+
+    if (action === "delete") {
+
+      const confirmed =
+        confirm(
+          "Are you sure you want to permanently delete this demo account?"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      await callAdminFunction(
+        "delete",
+        {
+          uid: uid
+        }
+      );
+
+      showMessage(
+        "Customer account deleted."
+      );
+
+      return;
+    }
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    showMessage(
+      error?.message ||
+      "The administrator action failed.",
+      "error"
+    );
+
+  }
+
+};
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value) {
+
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    function (character) {
+
+      return {
+
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+
+      }[character];
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   FORMAT MONEY
+========================================= */
+
+function formatMoney(
+  amount
+) {
+
+  return Number(
+    amount || 0
+  ).toLocaleString(
+    "en-NG",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDate(
+  value
+) {
+
+  if (!value) {
+    return "Not available";
+  }
+
+  try {
+
+    if (
+      typeof value.toDate ===
+      "function"
+    ) {
+
+      value =
+        value.toDate();
+
+    }
+
+    return new Date(
+      value
+    ).toLocaleString();
+
+  }
+
+  catch {
+
+    return "Not available";
+
+  }
+
+}
+
+
+/* =========================================
+   RENDER CUSTOMERS
+========================================= */
+
+window.renderCustomers =
+function () {
+
+  const search =
+    $("search")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const filtered =
+    customers.filter(
+      customer => {
+
+        const name =
+          String(
+            customer.name || ""
+          ).toLowerCase();
+
+        const email =
+          String(
+            customer.email || ""
+          ).toLowerCase();
+
+        const accountNumber =
+          String(
+            customer.accountNumber || ""
+          ).toLowerCase();
+
+
+        return (
+          name.includes(search) ||
+          email.includes(search) ||
+          accountNumber.includes(search)
+        );
+
+      }
+    );
+
+
+  $("count").textContent =
+    customers.length;
+
+
+  $("pending").textContent =
+    customers.filter(
+      customer =>
+        customer.status === "pending"
+    ).length;
+
+
+  $("frozen").textContent =
+    customers.filter(
+      customer =>
+        customer.status === "frozen"
+    ).length;
+
+
+  if (!filtered.length) {
+
+    $("customers").innerHTML = `
+      <p class="muted">
+        No customer accounts found.
+      </p>
+    `;
+
+    return;
+  }
+
+
+  $("customers").innerHTML =
+    filtered.map(
+      customer => {
+
+        const uid =
+          customer.uid ||
+          customer.id;
+
+        const status =
+          customer.status ||
+          "pending";
+
+        let tagClass =
+          "pending";
+
+        if (
+          status === "approved"
+        ) {
+          tagClass = "approved";
+        }
+
+        if (
+          status === "frozen"
+        ) {
+          tagClass = "frozen";
+        }
+
+
+        const freezeText =
+          status === "frozen"
+            ? "Unfreeze Account"
+            : "Freeze Account";
+
+
+        return `
+
+          <div class="customer">
+
+            <div class="customer-top">
+
+              <div>
+
+                <div class="customer-name">
+                  ${escapeHTML(
+                    customer.name ||
+                    "Unnamed Customer"
+                  )}
+                </div>
+
+                <div class="muted">
+                  ${escapeHTML(
+                    customer.email ||
+                    ""
+                  )}
+                </div>
+
+              </div>
+
+              <span class="tag ${tagClass}">
+                ${escapeHTML(status)}
+              </span>
+
+            </div>
+
+
+            <div class="customer-info">
+
+              <b>Account number:</b>
+              ${escapeHTML(
+                customer.accountNumber ||
+                "—"
+              )}
+
+              <br>
+
+              <b>Account type:</b>
+              ${escapeHTML(
+                customer.accountType ||
+                "—"
+              )}
+
+              <br>
+
+              <b>Virtual balance:</b>
+              ₦${formatMoney(
+                customer.balance
+              )}
+
+              <br>
+
+              <b>Created:</b>
+              ${formatDate(
+                customer.createdAtOverride ||
+                customer.createdAt
+              )}
+
+            </div>
+
+
+            <div class="actions">
+
+              <button
+                onclick="performAction(
+                  'approve',
+                  '${uid}'
+                )"
+              >
+                ✓ Approve
+              </button>
+
+
+              <button
+                class="warning"
+                onclick="performAction(
+                  'freeze',
+                  '${uid}'
+                )"
+              >
+                ❄ ${freezeText}
+              </button>
+
+
+              <button
+                onclick="performAction(
+                  'fund',
+                  '${uid}'
+                )"
+              >
+                ₦ Add Demo Funds
+              </button>
+
+
+              <button
+                class="secondary"
+                onclick="performAction(
+                  'date',
+                  '${uid}'
+                )"
+              >
+                📅 Change Created Date
+              </button>
+
+
+              <button
+                class="danger full"
+                onclick="performAction(
+                  'delete',
+                  '${uid}'
+                )"
+              >
+                🗑 Delete Account
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join("");
+
+};
+
+
+/* =========================================
+   AUTH STATE
+========================================= */
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    if (!user) {
+
+      $("loginView")
+        .classList
+        .remove("hidden");
+
+      $("panelView")
+        .classList
+        .add("hidden");
+
+      return;
+    }
+
+
+    try {
+
+      /*
+        Verify that this Firebase user
+        exists in the admins collection
+        and has:
+
+        role: "admin"
+        active: true
+      */
+
+      const result =
+        await callAdminFunction(
+          "checkAdmin",
+          {}
+        );
+
+
+      if (
+        !result.data ||
+        result.data.admin !== true
+      ) {
+
+        throw new Error(
+          "This Firebase account is not an active Cashflowbank administrator."
+        );
+
+      }
+
+
+      $("loginView")
+        .classList
+        .add("hidden");
+
+      $("panelView")
+        .classList
+        .remove("hidden");
+
+
+      /*
+        Listen for customer changes.
+        The customer documents themselves
+        remain protected by Firestore rules.
+      */
+
+      const customerQuery =
+        query(
+          collection(
+            db,
+            "customers"
+          ),
+          orderBy(
+            "name"
+          )
+        );
+
+
+      onSnapshot(
+        customerQuery,
+        snapshot => {
+
+          customers =
+            snapshot.docs.map(
+              document => {
+
+                return {
+                  id: document.id,
+                  ...document.data()
+                };
+
+              }
+            );
+
+
+          renderCustomers();
+
+        },
+
+        error => {
+
+          console.error(error);
+
+          showMessage(
+            "Unable to load customer accounts: " +
+            error.message,
+            "error"
+          );
+
+        }
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      await signOut(auth);
+
+
+      $("loginMsg").textContent =
+        error.message ||
+        "Administrator verification failed.";
+
+      $("loginMsg").className =
+        "notice error";
+
+      $("loginMsg")
+        .classList
+        .remove("hidden");
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
