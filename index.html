@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cashflowbank</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --bg-card: #1a2332;
+      --bg-elevated: #243044;
+      --border: #2d3a4f;
+      --text: #e8eef7;
+      --text-muted: #8b9cb3;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    .hidden { display: none !important; }
+    .screen { min-height: 100vh; }
+    #auth-screen { display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(ellipse at top, #1a2744 0%, var(--bg) 60%); }
+    .auth-container { width: 100%; max-width: 420px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px; box-shadow: var(--shadow); }
+    .logo { text-align: center; margin-bottom: 32px; }
+    .logo-icon { width: 56px; height: 56px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: white; margin-bottom: 12px; }
+    .logo-icon.small { width: 36px; height: 36px; font-size: 13px; border-radius: 10px; margin-bottom: 0; }
+    .logo-icon.admin { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+    .logo h1 { font-size: 24px; font-weight: 700; }
+    .tagline { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+    .auth-tabs { display: flex; background: var(--bg); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+    .tab { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); font-weight: 500; font-size: 14px; border-radius: 8px; cursor: pointer; }
+    .tab.active { background: var(--bg-elevated); color: var(--text); }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+    .form-group input, #search-users, #filter-status { width: 100%; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px; outline: none; }
+    .form-group input:focus, #search-users:focus, #filter-status:focus { border-color: var(--primary); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 18px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: var(--primary); color: white; width: 100%; padding: 13px; margin-top: 8px; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost { background: transparent; color: var(--text-muted); }
+    .btn-ghost:hover { color: var(--text); background: var(--bg-elevated); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-sm { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-warning { background: var(--warning); color: #111; }
+    .auth-error { color: var(--danger); font-size: 13px; margin-top: 12px; text-align: center; min-height: 20px; }
+    .auth-note { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 16px; }
+    .navbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; background: var(--bg-card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+    .navbar.admin { border-bottom-color: rgba(245, 158, 11, 0.3); }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; }
+    .badge { background: var(--warning); color: #111; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; margin-left: 4px; }
+    .nav-user { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted); }
+    .dashboard { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .admin-main { max-width: 1200px; }
+    .banner { padding: 16px 20px; border-radius: var(--radius); margin-bottom: 24px; }
+    .banner.warning { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; }
+    .banner.danger { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; }
+    .banner strong { display: block; margin-bottom: 4px; }
+    .banner p { font-size: 14px; opacity: 0.9; }
+    .balance-card { background: linear-gradient(135deg, #1e3a5f 0%, #1a2332 100%); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 28px; text-align: center; }
+    .balance-label { color: var(--text-muted); font-size: 14px; margin-bottom: 8px; }
+    .balance-amount { font-size: 42px; font-weight: 700; margin-bottom: 12px; }
+    .account-status, .account-meta { font-size: 13px; color: var(--text-muted); }
+    .account-status span { font-weight: 600; text-transform: capitalize; }
+    .info-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+    .info-card h3 { font-size: 15px; margin-bottom: 16px; color: var(--text-muted); }
+    .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row span:first-child { color: var(--text-muted); }
+    .mono { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; }
+    .admin-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+    .admin-header h2 { font-size: 22px; }
+    .admin-stats { display: flex; gap: 20px; }
+    .stat { text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; min-width: 80px; }
+    .stat-value { display: block; font-size: 22px; font-weight: 700; }
+    .stat-label { font-size: 12px; color: var(--text-muted); }
+    .admin-toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    #search-users { flex: 1; min-width: 200px; }
+    #filter-status { width: auto; min-width: 140px; }
+    .table-wrapper { overflow-x: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); }
+    .users-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .users-table th { text-align: left; padding: 14px 16px; background: var(--bg-elevated); color: var(--text-muted); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .users-table td { padding: 14px 16px; border-top: 1px solid var(--border); vertical-align: middle; }
+    .status-pill { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: capitalize; }
+    .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .status-approved { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+    .status-frozen { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .actions-cell { display: flex; flex-wrap: wrap; gap: 6px; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; width: 100%; max-width: 400px; box-shadow: var(--shadow); }
+    .modal-content h3 { margin-bottom: 8px; font-size: 18px; }
+    .modal-user { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+    .danger-text { color: var(--danger); font-size: 13px; margin: 12px 0 20px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .modal-actions .btn-primary, .modal-actions .btn-danger { width: auto; margin-top: 0; }
+    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 200; box-shadow: var(--shadow); }
+    .toast.success { border-color: var(--success); }
+    .toast.error { border-color: var(--danger); }
+    @media (max-width: 640px) {
+      .admin-stats { width: 100%; justify-content: space-between; }
+      .stat { flex: 1; padding: 10px 8px; }
+      .actions-cell { flex-direction: column; }
+      .balance-amount { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="auth-screen" class="screen">
+    <div class="auth-container">
+      <div class="logo">
+        <div class="logo-icon">CF</div>
+        <h1>Cashflowbank</h1>
+        <p class="tagline">Secure Digital Banking</p>
+      </div>
+      <div class="auth-tabs">
+        <button class="tab active" data-tab="login">Login</button>
+        <button class="tab" data-tab="register">Register</button>
+      </div>
+      <form id="login-form" class="auth-form active">
+        <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" placeholder="you@example.com" required /></div>
+        <div class="form-group"><label for="login-password">Password</label><input type="password" id="login-password" placeholder="••••••••" required /></div>
+        <button type="submit" class="btn btn-primary">Sign In</button>
+        <p class="auth-error" id="login-error"></p>
+      </form>
+      <form id="register-form" class="auth-form">
+        <div class="form-group"><label for="reg-name">Full Name</label><input type="text" id="reg-name" placeholder="John Doe" required /></div>
+        <div class="form-group"><label for="reg-email">Email</label><input type="email" id="reg-email" placeholder="you@example.com" required /></div>
+        <div class="form-group"><label for="reg-password">Password</label><input type="password" id="reg-password" placeholder="Min. 6 characters" required minlength="6" /></div>
+        <button type="submit" class="btn btn-primary">Create Account</button>
+        <p class="auth-error" id="register-error"></p>
+        <p class="auth-note">New accounts require admin approval before full access.</p>
+      </form>
+    </div>
+  </div>
+
+  <div id="user-dashboard" class="screen hidden">
+    <nav class="navbar">
+      <div class="nav-brand"><div class="logo-icon small">CF</div><span>Cashflowbank</span></div>
+      <div class="nav-user"><span id="user-name-display"></span><button id="logout-btn" class="btn btn-ghost">Logout</button></div>
+    </nav>
+    <main class="dashboard">
+      <div id="pending-banner" class="banner warning hidden"><strong>Account Pending Approval</strong><p>Your account is awaiting admin approval.</p></div>
+      <div id="frozen-banner" class="banner danger hidden"><strong>Account Frozen</strong><p>Your account has been frozen. Please contact support.</p></div>
+      <div class="balance-card">
+        <p class="balance-label">Available Balance</p>
+        <h2 class="balance-amount" id="user-balance">$0.00</h2>
+        <p class="account-status">Status: <span id="user-status">—</span></p>
+        <p class="account-meta">Account created: <span id="user-created"></span></p>
+      </div>
+      <div class="info-card">
+        <h3>Account Details</h3>
+        <div class="detail-row"><span>Email</span><span id="user-email-display">—</span></div>
+        <div class="detail-row"><span>UID</span><span id="user-uid-display" class="mono">—</span></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="admin-dashboard" class="screen hidden">
+    <nav class="navbar admin">
+      <div class="nav-brand"><div class="logo-icon small admin">CF</div><span>Cashflowbank <span class="badge">Admin</span></span></div>
+      <div class="nav-user"><span id="admin-name-display"></span><button id="admin-logout-btn" class="btn btn-ghost">Logout</button></div>
+    </nav>
+    <main class="dashboard admin-main">
+      <div class="admin-header">
+        <h2>Account Management</h2>
+        <div class="admin-stats">
+          <div class="stat"><span class="stat-value" id="stat-total">0</span><span class="stat-label">Total</span></div>
+          <div class="stat"><span class="stat-value" id="stat-pending">0</span><span class="stat-label">Pending</span></div>
+          <div class="stat"><span class="stat-value" id="stat-approved">0</span><span class="stat-label">Approved</span></div>
+          <div class="stat"><span class="stat-value" id="stat-frozen">0</span><span class="stat-label">Frozen</span></div>
+        </div>
+      </div>
+      <div class="admin-toolbar">
+        <input type="text" id="search-users" placeholder="Search by name or email..." />
+        <select id="filter-status">
+          <option value="all">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="frozen">Frozen</option>
+        </select>
+        <button id="refresh-users" class="btn btn-secondary">Refresh</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="users-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Balance</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+          <tbody id="users-tbody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <div id="fund-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Fund Account</h3>
+      <p class="modal-user" id="fund-user-name"></p>
+      <div class="form-group"><label for="fund-amount">Amount ($)</label><input type="number" id="fund-amount" min="0.01" step="0.01" placeholder="100.00" /></div>
+      <div class="modal-actions"><button class="btn btn-ghost" data-close="fund-modal">Cancel</button><button class="btn btn-primary" id="confirm-fund">Add Funds</button></div>
+    </div>
+  </div>
+
+  <div id="date-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Change Account Created Date</h3>
+      <p class="modal-user" id="date-user-name"></p>
+      <div class="form-group"><label for="new-created-date">New Created Date</label><input type="datetime-local" id="new-created-date" /></div>
+      <div class="modal-actions"><button class="btn btn-ghost" data-close="date-modal">Cancel</button><button class="btn btn-primary" id="confirm-date">Update Date</button></div>
+    </div>
+  </div>
+
+  <div id="delete-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Delete Account</h3>
+      <p>Are you sure you want to permanently delete <strong id="delete-user-name"></strong>?</p>
+      <p class="danger-text">This cannot be undone.</p>
+      <div class="modal-actions"><button class="btn btn-ghost" data-close="delete-modal">Cancel</button><button class="btn btn-danger" id="confirm-delete">Delete Account</button></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, deleteDoc, query, orderBy, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCEG_skF7Nwq1iN45sdhz9OCdJtEM2Wugs",
+      authDomain: "flow-bank-bc26f.firebaseapp.com",
+      projectId: "flow-bank-bc26f",
+      storageBucket: "flow-bank-bc26f.firebasestorage.app",
+      messagingSenderId: "1053151956112",
+      appId: "1:1053151956112:web:d74d616ae07474fdc91c15"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null, currentUserData = null, allUsers = [], selectedUserId = null;
+
+    const authScreen = document.getElementById("auth-screen");
+    const userDashboard = document.getElementById("user-dashboard");
+    const adminDashboard = document.getElementById("admin-dashboard");
+
+    function showToast(msg, type = "success") {
+      const t = document.getElementById("toast");
+      t.textContent = msg; t.className = `toast ${type}`;
+      setTimeout(() => t.classList.add("hidden"), 3000);
+    }
+    function formatCurrency(a) { return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(a || 0); }
+    function formatDate(ts) {
+      if (!ts) return "—";
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+    function toDatetimeLocal(ts) {
+      if (!ts) return "";
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const p = n => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+    function showScreen(s) {
+      authScreen.classList.add("hidden"); userDashboard.classList.add("hidden"); adminDashboard.classList.add("hidden");
+      s.classList.remove("hidden");
+    }
+    function escapeHtml(str) { const d = document.createElement("div"); d.textContent = str; return d.innerHTML; }
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+        document.getElementById(tab.dataset.tab === "login" ? "login-form" : "register-form").classList.add("active");
+        document.getElementById("login-error").textContent = "";
+        document.getElementById("register-error").textContent = "";
+      });
+    });
+
+    document.getElementById("register-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const password = document.getElementById("reg-password").value;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const usersSnap = await getDocs(collection(db, "users"));
+        const isFirst = usersSnap.empty;
+        await setDoc(doc(db, "users", cred.user.uid), {
+          uid: cred.user.uid, email, name, balance: 0,
+          status: isFirst ? "approved" : "pending",
+          role: isFirst ? "admin" : "user",
+          createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+        });
+        showToast(isFirst ? "Admin account created!" : "Account created. Awaiting approval.");
+      } catch (err) {
+        document.getElementById("register-error").textContent = err.message.replace("Firebase: ", "");
+      }
+    });
+
+    document.getElementById("login-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      try {
+        await signInWithEmailAndPassword(auth, document.getElementById("login-email").value.trim(), document.getElementById("login-password").value);
+      } catch (err) {
+        document.getElementById("login-error").textContent = err.message.replace("Firebase: ", "");
+      }
+    });
+
+    async function handleLogout() { await signOut(auth); showScreen(authScreen); }
+    document.getElementById("logout-btn").addEventListener("click", handleLogout);
+    document.getElementById("admin-logout-btn").addEventListener("click", handleLogout);
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) { showScreen(authScreen); return; }
+      currentUser = user;
+      let userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists()) {
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid, email: user.email, name: user.email.split("@")[0],
+          balance: 0, status: "pending", role: "user",
+          createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+        });
+        userDoc = await getDoc(doc(db, "users", user.uid));
+      }
+      currentUserData = userDoc.data();
+      if (currentUserData.role === "admin") {
+        showScreen(adminDashboard);
+        document.getElementById("admin-name-display").textContent = currentUserData.name || currentUserData.email;
+        await loadAdminUsers();
+      } else {
+        showScreen(userDashboard);
+        document.getElementById("user-name-display").textContent = currentUserData.name || "User";
+        document.getElementById("user-balance").textContent = formatCurrency(currentUserData.balance);
+        document.getElementById("user-status").textContent = currentUserData.status || "—";
+        document.getElementById("user-created").textContent = formatDate(currentUserData.createdAt);
+        document.getElementById("user-email-display").textContent = currentUserData.email;
+        document.getElementById("user-uid-display").textContent = currentUserData.uid;
+        document.getElementById("pending-banner").classList.toggle("hidden", currentUserData.status !== "pending");
+        document.getElementById("frozen-banner").classList.toggle("hidden", currentUserData.status !== "frozen");
+      }
+    });
+
+    async function loadAdminUsers() {
+      try {
+        const snap = await getDocs(query(collection(db, "users"), orderBy("createdAt", "desc")));
+        allUsers = [];
+        snap.forEach(d => allUsers.push({ id: d.id, ...d.data() }));
+        renderUsersTable();
+        document.getElementById("stat-total").textContent = allUsers.length;
+        document.getElementById("stat-pending").textContent = allUsers.filter(u => u.status === "pending").length;
+        document.getElementById("stat-approved").textContent = allUsers.filter(u => u.status === "approved").length;
+        document.getElementById("stat-frozen").textContent = allUsers.filter(u => u.status === "frozen").length;
+      } catch (err) { showToast("Failed to load users: " + err.message, "error"); }
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById("users-tbody");
+      const search = document.getElementById("search-users").value.toLowerCase();
+      const filter = document.getElementById("filter-status").value;
+      const filtered = allUsers.filter(u => {
+        const matchS = !search || (u.name||"").toLowerCase().includes(search) || (u.email||"").toLowerCase().includes(search);
+        return matchS && (filter === "all" || u.status === filter);
+      });
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">No accounts found</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = filtered.map(u => {
+        const isSelf = u.uid === currentUser.uid;
+        return `<tr>
+          <td><strong>${escapeHtml(u.name||"—")}</strong>${isSelf?' <span style="color:var(--text-muted);font-size:11px;">(you)</span>':''}</td>
+          <td>${escapeHtml(u.email||"—")}</td>
+          <td>${formatCurrency(u.balance)}</td>
+          <td><span class="status-pill status-${u.status||"pending"}">${u.status||"pending"}</span></td>
+          <td>${formatDate(u.createdAt)}</td>
+          <td class="actions-cell">
+            ${u.status==="pending"?`<button class="btn btn-sm btn-success" data-action="approve" data-uid="${u.uid}">Approve</button>`:""}
+            ${u.status!=="frozen"&&u.status!=="pending"?`<button class="btn btn-sm btn-warning" data-action="freeze" data-uid="${u.uid}">Freeze</button>`:""}
+            ${u.status==="frozen"?`<button class="btn btn-sm btn-success" data-action="unfreeze" data-uid="${u.uid}">Unfreeze</button>`:""}
+            <button class="btn btn-sm btn-secondary" data-action="fund" data-uid="${u.uid}">Fund</button>
+            <button class="btn btn-sm btn-secondary" data-action="date" data-uid="${u.uid}">Date</button>
+            ${!isSelf?`<button class="btn btn-sm btn-danger" data-action="delete" data-uid="${u.uid}">Delete</button>`:""}
+          </td>
+        </tr>`;
+      }).join("");
+    }
+
+    document.getElementById("search-users").addEventListener("input", renderUsersTable);
+    document.getElementById("filter-status").addEventListener("change", renderUsersTable);
+    document.getElementById("refresh-users").addEventListener("click", loadAdminUsers);
+
+    document.getElementById("users-tbody").addEventListener("click", async e => {
+      const btn = e.target.closest("[data-action]");
+      if (!btn) return;
+      const action = btn.dataset.action, uid = btn.dataset.uid;
+      const user = allUsers.find(u => u.uid === uid);
+      if (!user) return;
+      selectedUserId = uid;
+      if (action === "approve") await updateStatus(uid, "approved");
+      else if (action === "freeze") await updateStatus(uid, "frozen");
+      else if (action === "unfreeze") await updateStatus(uid, "approved");
+      else if (action === "fund") {
+        document.getElementById("fund-user-name").textContent = `${user.name} (${user.email})`;
+        document.getElementById("fund-amount").value = "";
+        document.getElementById("fund-modal").classList.remove("hidden");
+      } else if (action === "date") {
+        document.getElementById("date-user-name").textContent = `${user.name} (${user.email})`;
+        document.getElementById("new-created-date").value = toDatetimeLocal(user.createdAt);
+        document.getElementById("date-modal").classList.remove("hidden");
+      } else if (action === "delete") {
+        document.getElementById("delete-user-name").textContent = user.name || user.email;
+        document.getElementById("delete-modal").classList.remove("hidden");
+      }
+    });
+
+    async function updateStatus(uid, status) {
+      try {
+        await updateDoc(doc(db, "users", uid), { status, updatedAt: serverTimestamp() });
+        showToast(`Account ${status}`);
+        await loadAdminUsers();
+      } catch (err) { showToast(err.message, "error"); }
+    }
+
+    document.getElementById("confirm-fund").addEventListener("click", async () => {
+      const amount = parseFloat(document.getElementById("fund-amount").value);
+      if (!amount || amount <= 0) return showToast("Enter a valid amount", "error");
+      try {
+        const ref = doc(db, "users", selectedUserId);
+        const snap = await getDoc(ref);
+        await updateDoc(ref, { balance: (snap.data().balance || 0) + amount, updatedAt: serverTimestamp() });
+        showToast(`Added ${formatCurrency(amount)}`);
+        document.getElementById("fund-modal").classList.add("hidden");
+        await loadAdminUsers();
+      } catch (err) { showToast(err.message, "error"); }
+    });
+
+    document.getElementById("confirm-date").addEventListener("click", async () => {
+      const val = document.getElementById("new-created-date").value;
+      if (!val) return showToast("Select a date", "error");
+      try {
+        await updateDoc(doc(db, "users", selectedUserId), { createdAt: Timestamp.fromDate(new Date(val)), updatedAt: serverTimestamp() });
+        showToast("Created date updated");
+        document.getElementById("date-modal").classList.add("hidden");
+        await loadAdminUsers();
+      } catch (err) { showToast(err.message, "error"); }
+    });
+
+    document.getElementById("confirm-delete").addEventListener("click", async () => {
+      try {
+        await deleteDoc(doc(db, "users", selectedUserId));
+        showToast("Account profile deleted");
+        document.getElementById("delete-modal").classList.add("hidden");
+        await loadAdminUsers();
+      } catch (err) { showToast(err.message, "error"); }
+    });
+
+    document.querySelectorAll("[data-close]").forEach(btn => {
+      btn.addEventListener("click", () => document.getElementById(btn.dataset.close).classList.add("hidden"));
+    });
+    document.querySelectorAll(".modal").forEach(m => {
+      m.addEventListener("click", e => { if (e.target === m) m.classList.add("hidden"); });
+    });
+  </script>
+</body>
+</html>
